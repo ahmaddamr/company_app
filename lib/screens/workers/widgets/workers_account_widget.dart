@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/screens/auth/widgets/custom_button.dart';
+import 'package:shop_app/utils/functions.dart';
 import 'package:shop_app/utils/styles.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WorkersAccountWidget extends StatelessWidget {
   const WorkersAccountWidget({super.key});
@@ -98,24 +100,30 @@ class WorkersAccountWidget extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        GestureDetector(
-                          onTap: () {},
+                        InkWell(
+                          onTap: () {
+                            Functions.openWhatsApp();
+                          },
                           child: Image.network(
                             'https://cdn-icons-png.flaticon.com/128/4423/4423697.png',
                             width: 40,
                             height: 40,
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {},
+                        InkWell(
+                          onTap: () {
+                            Functions.openMail();
+                          },
                           child: Image.network(
                             'https://cdn-icons-png.flaticon.com/128/732/732200.png',
                             width: 40,
                             height: 40,
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {},
+                        InkWell(
+                          onTap: () {
+                            Functions.openPhoneDialer();
+                          },
                           child: Image.network(
                             'https://cdn-icons-png.flaticon.com/128/152/152851.png',
                             width: 40,

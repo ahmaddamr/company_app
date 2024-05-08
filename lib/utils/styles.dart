@@ -21,7 +21,7 @@ class Styles {
     'Digital Marketing'
   ];
   static const Color buttonColor = Color(0xffAC1457);
-  static const Color scaffold =  Color.fromARGB(255, 204, 203, 203);
+  static const Color scaffold = Color.fromARGB(255, 204, 203, 203);
   static const Color darkBlue = Color.fromARGB(255, 50, 3, 181);
   static const TextStyle authenticationText30 =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white);
