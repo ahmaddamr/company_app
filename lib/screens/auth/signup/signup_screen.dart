@@ -2,6 +2,7 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shop_app/screens/auth/widgets/custom_button.dart';
 import 'package:shop_app/screens/auth/widgets/custom_text_field.dart';
@@ -357,7 +358,6 @@ class _LoginScreenState extends State<SignUpScreen>
               InkWell(
                 onTap: pickImgWithGallery,
                 child: const Row(
-                  
                   children: [
                     Icon(
                       Icons.photo_album,
@@ -383,10 +383,13 @@ class _LoginScreenState extends State<SignUpScreen>
   void pickImgWithCamera() async {
     XFile? pickedfile = await ImagePicker()
         .pickImage(source: ImageSource.camera, maxHeight: 1080, maxWidth: 1080);
+    // if (pickedfile != null) {
+    //   setState(() {
+    //     imgFile = File(pickedfile.path);
+    //   });
+    // }
     if (pickedfile != null) {
-      setState(() {
-      imgFile = File(pickedfile.path);
-    });
+      cropImg(pickedfile.path);
     }
     // ignore: use_build_context_synchronously
     Navigator.pop(context);
@@ -395,12 +398,25 @@ class _LoginScreenState extends State<SignUpScreen>
   void pickImgWithGallery() async {
     XFile? pickedfile = await ImagePicker().pickImage(
         source: ImageSource.gallery, maxHeight: 1080, maxWidth: 1080);
+    // if (pickedfile != null) {
+    //   setState(() {
+    //     imgFile = File(pickedfile.path);
+    //   });
+    // }
     if (pickedfile != null) {
-      setState(() {
-      imgFile = File(pickedfile.path);
-    });
+      cropImg(pickedfile.path);
     }
     // ignore: use_build_context_synchronously
     Navigator.pop(context);
+  }
+
+  void cropImg(filePath) async {
+    CroppedFile? croppedFile = await ImageCropper.platform
+        .cropImage(sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
+    if (croppedFile != null) {
+      setState(() {
+        imgFile = croppedFile;
+      });
+    }
   }
 }

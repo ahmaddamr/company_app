@@ -3,6 +3,7 @@ import 'package:shop_app/screens/auth/login/forget_password_screen.dart';
 import 'package:shop_app/screens/auth/login/login_screen.dart';
 import 'package:shop_app/screens/auth/signup/signup_screen.dart';
 import 'package:shop_app/screens/tasks/add_task_screen.dart';
+import 'package:shop_app/screens/tasks/task_details_screen.dart';
 import 'package:shop_app/screens/tasks/tasks_screen.dart';
 import 'package:shop_app/screens/workers/worker_account_screen.dart';
 import 'package:shop_app/screens/workers/workers_screen.dart';
@@ -26,9 +27,10 @@ class CompanyApp extends StatelessWidget {
         'TasksScreen': (context) =>const TasksScreen(),
         'AddTaskScreen': (context) =>const AddTaskScreen(),
         'WorkersScreen': (context) => const WorkersScreen(),
-        'WorkerAccountScreen': (context) => const WorkerAccountScreen()
+        'WorkerAccountScreen': (context) => const WorkerAccountScreen(),
+        'TaskDetailsScreen':(context) => TaskDetailsScreen()
       },
-      initialRoute: 'SignUpScreen',
+      initialRoute: 'TasksScreen',
       theme: ThemeData(
         scaffoldBackgroundColor: Styles.scaffold,
       ),

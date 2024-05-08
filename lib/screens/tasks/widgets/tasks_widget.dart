@@ -16,7 +16,10 @@ class TasksWidget extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: Styles.listTitle,
         ),
-        onTap: () {},
+        onTap: () 
+        {
+        Navigator.of(context).pushNamed('TaskDetailsScreen');
+        },
         onLongPress: () {
           showDialog(
             context: context,
