@@ -22,8 +22,7 @@ class _LoginScreenState extends State<LoginScreen>
   late TextEditingController _passController = TextEditingController(text: '');
   bool isSecurePassword = true;
   GlobalKey<FormState> formKey = GlobalKey();
-  // ignore: unused_field
-  static String id = 'LoginScreen';
+  // static String id = 'LoginScreen';
 
   @override
   void dispose() {

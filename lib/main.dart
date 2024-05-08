@@ -30,7 +30,7 @@ class CompanyApp extends StatelessWidget {
         'WorkerAccountScreen': (context) => const WorkerAccountScreen(),
         'TaskDetailsScreen':(context) => TaskDetailsScreen()
       },
-      initialRoute: 'TasksScreen',
+      initialRoute: 'SignUpScreen',
       theme: ThemeData(
         scaffoldBackgroundColor: Styles.scaffold,
       ),

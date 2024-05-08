@@ -30,8 +30,7 @@ class _LoginScreenState extends State<SignUpScreen>
   var imgFile;
   bool isSecurePassword = true;
   GlobalKey<FormState> formKey = GlobalKey();
-  // ignore: unused_field
-  static String id = 'SignUpScreen';
+  // static String id = 'SignUpScreen';
   @override
   void dispose() {
     _animationController.dispose();
