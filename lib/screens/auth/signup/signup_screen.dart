@@ -1,12 +1,14 @@
 // ignore_for_file: avoid_print
-import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shop_app/screens/auth/widgets/custom_button.dart';
 import 'package:shop_app/screens/auth/widgets/custom_text_field.dart';
 import 'package:shop_app/screens/auth/widgets/rich_text_widget.dart';
+import 'package:shop_app/screens/auth/widgets/sign_errors_dialoge.dart';
 import 'package:shop_app/utils/styles.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -29,8 +31,10 @@ class _LoginScreenState extends State<SignUpScreen>
   // ignore: prefer_typing_uninitialized_variables
   var imgFile;
   bool isSecurePassword = true;
+  bool isLoading = false;
   GlobalKey<FormState> formKey = GlobalKey();
-  // static String id = 'SignUpScreen';
+  // 1st Step for authentication
+  final FirebaseAuth auth = FirebaseAuth.instance;
   @override
   void dispose() {
     _animationController.dispose();
@@ -284,20 +288,65 @@ class _LoginScreenState extends State<SignUpScreen>
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.05,
                   ),
-                  CustomButton(
-                    text: 'SignUp',
-                    backgroundColor: Styles.buttonColor,
-                    borderSideColor: Colors.transparent,
-                    style: Styles.authenticationText15,
-                    onPressed: () {
-                      if (formKey.currentState!.validate()) {
-                        formKey.currentState!.save();
-                        print('valid');
-                      } else {
-                        print('not valid');
-                      }
-                    },
-                  ),
+                  isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : CustomButton(
+                          text: 'SignUp',
+                          backgroundColor: Styles.buttonColor,
+                          borderSideColor: Colors.transparent,
+                          style: Styles.authenticationText15,
+                          onPressed: () async {
+                            if (formKey.currentState!.validate()) {
+                              formKey.currentState!.save();
+                              setState(() {
+                                isLoading = true;
+                              });
+                              try {
+                                final credential = await FirebaseAuth.instance
+                                    .createUserWithEmailAndPassword(
+                                  email: _emailController.text.trim(),
+                                  password: _passController.text.trim(),
+                                );
+                                
+                                        Navigator.of(context).pushNamed('TasksScreen');
+                              } on FirebaseAuthException catch (e) {
+                                if (e.code == 'weak-password') {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return const SignErrorsDialoge(
+                                        error:
+                                            'The password provided is too weak.',
+                                      );
+                                    },
+                                  );
+                                  print('The password provided is too weak.');
+                                } else if (e.code == 'email-already-in-use') {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return const SignErrorsDialoge(
+                                        error:
+                                            'The account already exists for that email.',
+                                      );
+                                    },
+                                  );
+                                  print(
+                                      'The account already exists for that email.');
+                                }
+                              } catch (e) {
+                                print(e);
+                              }
+                            } else {
+                              print('not valid');
+                            }
+                            setState(() {
+                              isLoading = false;
+                            });
+                          },
+                        ),
                 ],
               ),
             ),

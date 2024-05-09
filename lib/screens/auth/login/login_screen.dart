@@ -1,10 +1,13 @@
 // ignore_for_file: avoid_print
-
+import 'dart:ffi';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_app/screens/auth/widgets/custom_button.dart';
 import 'package:shop_app/screens/auth/widgets/custom_text_field.dart';
+import 'package:shop_app/screens/auth/widgets/sign_errors_dialoge.dart';
+import 'package:shop_app/screens/tasks/tasks_screen.dart';
 import 'package:shop_app/utils/styles.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -22,8 +25,8 @@ class _LoginScreenState extends State<LoginScreen>
   late TextEditingController _passController = TextEditingController(text: '');
   bool isSecurePassword = true;
   GlobalKey<FormState> formKey = GlobalKey();
-  // static String id = 'LoginScreen';
-
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  bool isLoading = false;
   @override
   void dispose() {
     _animationController.dispose();
@@ -65,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen>
                 'assets/images/wallpaper.jpg',
                 fit: BoxFit.fill,
               ),
-              errorWidget: (context, url, error) =>const Icon(Icons.error),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
               fit: BoxFit.cover,
               width: double.infinity,
               height: double.infinity,
@@ -156,19 +159,71 @@ class _LoginScreenState extends State<LoginScreen>
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.05,
                   ),
-                  CustomButton(
-                      text: 'Login',
-                      backgroundColor: Styles.buttonColor,
-                      borderSideColor: Colors.transparent,
-                      style: Styles.authenticationText15,
-                      onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          formKey.currentState!.save();
-                          print('valid');
-                        } else {
-                          print('not valid');
-                        }
-                      }),
+                  isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : CustomButton(
+                          text: 'Login',
+                          backgroundColor: Styles.buttonColor,
+                          borderSideColor: Colors.transparent,
+                          style: Styles.authenticationText15,
+                          onPressed: () async {
+                            if (formKey.currentState!.validate()) {
+                              formKey.currentState!.save();
+                              // setState(() {
+                              //   isLoading = true;
+                              // });
+                              try {
+                                final credential = await FirebaseAuth.instance
+                                    .signInWithEmailAndPassword(
+                                        email: _emailController.text.trim(),
+                                        password: _passController.text.trim());
+                                        Navigator.of(context).pushNamed('TasksScreen');
+                              } on FirebaseAuthException catch (e) {
+                                if (e.code == 'user-not-found') {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return const SignErrorsDialoge(
+                                        error: 'No user found for that email.',
+                                      );
+                                    },
+                                  );
+                                  print('No user found for that email.');
+                                } else if (e.code == 'wrong-password') {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return const SignErrorsDialoge(
+                                        error:
+                                            'Wrong password provided for that user..',
+                                      );
+                                    },
+                                  );
+                                  print(
+                                      'Wrong password provided for that user.');
+                                }
+                              } catch (e) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return SignErrorsDialoge(
+                                      error: e.toString(),
+                                    );
+                                  },
+                                );
+                                print(e.toString());
+                              }
+
+                              print('valid');
+                            } else {
+                              print('not valid');
+                              // setState(()  {
+                              //   isLoading = false;
+                              // });
+                            }
+                          }),
                 ],
               ),
             ),

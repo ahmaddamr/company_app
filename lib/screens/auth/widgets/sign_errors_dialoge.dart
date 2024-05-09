@@ -1,10 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_app/utils/styles.dart';
 
-class LogoutAlertDialoge extends StatelessWidget {
-  LogoutAlertDialoge({super.key});
-  final FirebaseAuth auth = FirebaseAuth.instance;
+class SignErrorsDialoge extends StatelessWidget {
+  const SignErrorsDialoge({super.key, required this.error});
+  final String error;
 
   @override
   Widget build(BuildContext context) {
@@ -12,18 +11,18 @@ class LogoutAlertDialoge extends StatelessWidget {
       title: Row(
         children: [
           Image.network(
-            'https://cdn-icons-png.flaticon.com/128/1828/1828490.png',
+            'https://cdn-icons-png.flaticon.com/128/14090/14090276.png',
             height: 25,
             width: 25,
           ),
           const Padding(
             padding: EdgeInsets.all(8.0),
-            child: Text('Sign out'),
+            child: Text('Error'),
           )
         ],
       ),
-      content: const Text(
-        'Do you want to Sign out?',
+      content: Text(
+        error,
         style: Styles.listTile,
       ),
       actions: [
@@ -36,16 +35,6 @@ class LogoutAlertDialoge extends StatelessWidget {
             style: TextStyle(fontSize: 15),
           ),
         ),
-        TextButton(
-          onPressed: () async {
-            await auth.signOut();
-            Navigator.of(context).pushReplacementNamed('SignUpScreen');
-          },
-          child: const Text(
-            'Ok',
-            style: TextStyle(fontSize: 15, color: Colors.red),
-          ),
-        )
       ],
     );
   }
