@@ -33,6 +33,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   firebase_auth: ^4.19.5
   firebase_core: ^2.31.0
+  firebase_storage: ^11.7.5
   flutter:
     sdk: flutter
   image_cropper: ^6.0.0

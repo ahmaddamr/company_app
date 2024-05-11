@@ -1,7 +1,10 @@
 // ignore_for_file: avoid_print
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -35,6 +38,7 @@ class _LoginScreenState extends State<SignUpScreen>
   GlobalKey<FormState> formKey = GlobalKey();
   // 1st Step for authentication
   final FirebaseAuth auth = FirebaseAuth.instance;
+  String? photoUrl;
   @override
   void dispose() {
     _animationController.dispose();
@@ -300,6 +304,11 @@ class _LoginScreenState extends State<SignUpScreen>
                           onPressed: () async {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
+                              if (imgFile == null) {
+                                const SignErrorsDialoge(
+                                  error: 'Please pickup an image',
+                                );
+                              }
                               setState(() {
                                 isLoading = true;
                               });
@@ -309,8 +318,27 @@ class _LoginScreenState extends State<SignUpScreen>
                                   email: _emailController.text.trim(),
                                   password: _passController.text.trim(),
                                 );
-                                
-                                        Navigator.of(context).pushNamed('TasksScreen');
+                                final User? user = auth.currentUser;
+                                final Id = user!.uid;
+                                //function to upload profile img to firebase storage
+                                final url = FirebaseStorage.instance
+                                    .ref()
+                                    .child('userIMages')
+                                    .child(Id + '.jpg');
+                                await url.putFile(imgFile);
+                                photoUrl = await url.getDownloadURL();
+                                FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc('Id')
+                                    .set({
+                                  'id': Id,
+                                  'name': _FullNameController.text,
+                                  'email': _emailController.text,
+                                  'userImage': photoUrl,
+                                  'position': _positionController.text,
+                                  'createdAt': Timestamp.now()
+                                });
+                                Navigator.of(context).pushNamed('TasksScreen');
                               } on FirebaseAuthException catch (e) {
                                 if (e.code == 'weak-password') {
                                   showDialog(
@@ -431,14 +459,14 @@ class _LoginScreenState extends State<SignUpScreen>
   void pickImgWithCamera() async {
     XFile? pickedfile = await ImagePicker()
         .pickImage(source: ImageSource.camera, maxHeight: 1080, maxWidth: 1080);
-    // if (pickedfile != null) {
-    //   setState(() {
-    //     imgFile = File(pickedfile.path);
-    //   });
-    // }
     if (pickedfile != null) {
-      cropImg(pickedfile.path);
+      setState(() {
+        imgFile = File(pickedfile.path);
+      });
     }
+    // if (pickedfile != null) {
+    //   cropImg(pickedfile.path);
+    // }
     // ignore: use_build_context_synchronously
     Navigator.pop(context);
   }
@@ -446,14 +474,14 @@ class _LoginScreenState extends State<SignUpScreen>
   void pickImgWithGallery() async {
     XFile? pickedfile = await ImagePicker().pickImage(
         source: ImageSource.gallery, maxHeight: 1080, maxWidth: 1080);
-    // if (pickedfile != null) {
-    //   setState(() {
-    //     imgFile = File(pickedfile.path);
-    //   });
-    // }
     if (pickedfile != null) {
-      cropImg(pickedfile.path);
+      setState(() {
+        imgFile = File(pickedfile.path);
+      });
     }
+    // if (pickedfile != null) {
+    //   cropImg(pickedfile.path);
+    // }
     // ignore: use_build_context_synchronously
     Navigator.pop(context);
   }
