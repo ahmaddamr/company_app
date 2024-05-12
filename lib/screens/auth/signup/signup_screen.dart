@@ -26,6 +26,7 @@ class _LoginScreenState extends State<SignUpScreen>
   late AnimationController _animationController;
   late Animation<double> _animation;
   late TextEditingController _emailController = TextEditingController(text: '');
+  late TextEditingController _phoneController = TextEditingController(text: '');
   late TextEditingController _passController = TextEditingController(text: '');
   late TextEditingController _FullNameController =
       TextEditingController(text: '');
@@ -257,6 +258,22 @@ class _LoginScreenState extends State<SignUpScreen>
                     height: MediaQuery.of(context).size.height * 0.05,
                   ),
                   CustomTextFormField(
+                    controller: _phoneController,
+                    hint: 'PhoneNumber',
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Field is empty';
+                      } else {
+                        return null;
+                      }
+                    },
+                    onSaved: (p0) {},
+                    obscureText: false,
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.05,
+                  ),
+                  CustomTextFormField(
                     controller: _emailController,
                     hint: 'Email',
                     validator: (value) {
@@ -329,13 +346,14 @@ class _LoginScreenState extends State<SignUpScreen>
                                 photoUrl = await url.getDownloadURL();
                                 FirebaseFirestore.instance
                                     .collection('users')
-                                    .doc('Id')
+                                    .doc(Id)
                                     .set({
                                   'id': Id,
                                   'name': _FullNameController.text,
                                   'email': _emailController.text,
                                   'userImage': photoUrl,
                                   'position': _positionController.text,
+                                  'phoneNumber': _phoneController.text,
                                   'createdAt': Timestamp.now()
                                 });
                                 Navigator.of(context).pushNamed('TasksScreen');

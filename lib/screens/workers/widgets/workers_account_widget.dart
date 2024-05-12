@@ -1,11 +1,76 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_app/screens/auth/widgets/custom_button.dart';
+import 'package:shop_app/screens/auth/widgets/sign_errors_dialoge.dart';
+import 'package:shop_app/screens/tasks/widgets/logout_alert_dialoge.dart';
 import 'package:shop_app/utils/functions.dart';
 import 'package:shop_app/utils/styles.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-class WorkersAccountWidget extends StatelessWidget {
-  const WorkersAccountWidget({super.key});
+// ignore: must_be_immutable
+class WorkersAccountWidget extends StatefulWidget {
+  const WorkersAccountWidget({super.key, required this.userId});
+  final userId;
+
+  @override
+  State<WorkersAccountWidget> createState() => _WorkersAccountWidgetState();
+}
+
+class _WorkersAccountWidgetState extends State<WorkersAccountWidget> {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  String name = '';
+
+  String email = '';
+
+  String? img;
+
+  String position = '';
+
+  String loggedAt = '';
+
+  String? phoneNumber;
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
+  //all done
+
+  // function to show user data from firebase
+  void getUserData() async {
+    print('uid ${widget.userId}');
+    try {
+      final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.userId)
+          .get();
+
+      if (userDoc == null) {
+        return;
+      } else {
+        print('test');
+
+        email = await userDoc.get('email');
+        print('email$email');
+        name = await userDoc.get('name');
+        position = await userDoc.get('position');
+        img = await userDoc.get('userImage');
+        phoneNumber = await userDoc.get('phoneNumber');
+        Timestamp logged = await userDoc.get('createdAt');
+        var joinedAt = logged.toDate();
+        loggedAt = '${joinedAt.year}-${joinedAt.month}-${joinedAt.day}';
+        print('test2');
+        setState(() {});
+        print(name);
+        User? user = auth.currentUser;
+        String uid = user!.uid;
+      }
+    } catch (e) {
+      SignErrorsDialoge(
+        error: e.toString(),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +88,9 @@ class WorkersAccountWidget extends StatelessWidget {
                     child: CircleAvatar(
                       radius: 45,
                       child: Image.network(
-                        'https://cdn-icons-png.flaticon.com/128/3135/3135715.png',
+                        img == null
+                            ? 'https://cdn-icons-png.flaticon.com/128/3135/3135715.png'
+                            : img!,
                         width: 100,
                         height: 100,
                         fit: BoxFit.fill,
@@ -31,11 +98,11 @@ class WorkersAccountWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Mark Morph',
+                    name,
                     style: Styles.listTitle.copyWith(fontSize: 22),
                   ),
                   Text(
-                    'Team Leader Since 2021-7-8',
+                    loggedAt,
                     style: Styles.listTitle
                         .copyWith(color: Styles.darkBlue, fontSize: 17),
                   ),
@@ -63,7 +130,7 @@ class WorkersAccountWidget extends StatelessWidget {
                                     style: Styles.listTitle
                                         .copyWith(fontSize: 22)),
                                 TextSpan(
-                                  text: 'mark@gmail.com',
+                                  text: email,
                                   style: Styles.authenticationText15.copyWith(
                                       color: Colors.blue,
                                       decoration: TextDecoration.underline),
@@ -83,7 +150,7 @@ class WorkersAccountWidget extends StatelessWidget {
                                       Styles.listTitle.copyWith(fontSize: 22),
                                 ),
                                 TextSpan(
-                                  text: '5156116',
+                                  text: phoneNumber.toString(),
                                   style: Styles.authenticationText15.copyWith(
                                       color: Colors.blue,
                                       decoration: TextDecoration.underline),
@@ -102,7 +169,8 @@ class WorkersAccountWidget extends StatelessWidget {
                       children: [
                         InkWell(
                           onTap: () {
-                            Functions.openWhatsApp();
+                            Functions.openWhatsApp(
+                                phoneNumber: phoneNumber.toString());
                           },
                           child: Image.network(
                             'https://cdn-icons-png.flaticon.com/128/4423/4423697.png',
@@ -112,7 +180,7 @@ class WorkersAccountWidget extends StatelessWidget {
                         ),
                         InkWell(
                           onTap: () {
-                            Functions.openMail();
+                            Functions.openMail(email: email);
                           },
                           child: Image.network(
                             'https://cdn-icons-png.flaticon.com/128/732/732200.png',
@@ -122,7 +190,8 @@ class WorkersAccountWidget extends StatelessWidget {
                         ),
                         InkWell(
                           onTap: () {
-                            Functions.openPhoneDialer();
+                            Functions.openPhoneDialer(
+                                phoneNumber: phoneNumber.toString());
                           },
                           child: Image.network(
                             'https://cdn-icons-png.flaticon.com/128/152/152851.png',
@@ -144,7 +213,14 @@ class WorkersAccountWidget extends StatelessWidget {
                         backgroundColor: Styles.buttonColor,
                         borderSideColor: Colors.transparent,
                         style: Styles.authenticationText15,
-                        onPressed: () {}),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return LogoutAlertDialoge();
+                            },
+                          );
+                        }),
                   )
                 ],
               ),

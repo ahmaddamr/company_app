@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_app/screens/tasks/widgets/drawer_widget.dart';
 import 'package:shop_app/screens/workers/widgets/workers_account_widget.dart';
@@ -8,13 +9,16 @@ class WorkerAccountScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user!.uid;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
       ),
       drawer: const DrawerWidget(),
-      body: const WorkersAccountWidget(),
+      body:  WorkersAccountWidget(userId:uid ,),
     );
   }
 }
