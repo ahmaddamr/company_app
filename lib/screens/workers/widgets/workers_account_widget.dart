@@ -10,7 +10,7 @@ import 'package:shop_app/utils/styles.dart';
 // ignore: must_be_immutable
 class WorkersAccountWidget extends StatefulWidget {
   const WorkersAccountWidget({super.key, required this.userId});
-  final userId;
+  final String userId;
 
   @override
   State<WorkersAccountWidget> createState() => _WorkersAccountWidgetState();
@@ -48,10 +48,7 @@ class _WorkersAccountWidgetState extends State<WorkersAccountWidget> {
       if (userDoc == null) {
         return;
       } else {
-        print('test');
-
         email = await userDoc.get('email');
-        print('email$email');
         name = await userDoc.get('name');
         position = await userDoc.get('position');
         img = await userDoc.get('userImage');
@@ -59,9 +56,7 @@ class _WorkersAccountWidgetState extends State<WorkersAccountWidget> {
         Timestamp logged = await userDoc.get('createdAt');
         var joinedAt = logged.toDate();
         loggedAt = '${joinedAt.year}-${joinedAt.month}-${joinedAt.day}';
-        print('test2');
         setState(() {});
-        print(name);
         User? user = auth.currentUser;
         String uid = user!.uid;
       }
@@ -86,16 +81,10 @@ class _WorkersAccountWidgetState extends State<WorkersAccountWidget> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: CircleAvatar(
-                      radius: 45,
-                      child: Image.network(
-                        img == null
+                        radius: 60,
+                        backgroundImage: NetworkImage(img == null
                             ? 'https://cdn-icons-png.flaticon.com/128/3135/3135715.png'
-                            : img!,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.fill,
-                      ),
-                    ),
+                            : img!)),
                   ),
                   Text(
                     name,

@@ -1,7 +1,4 @@
-import 'dart:async';
-import 'dart:ui';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_app/firebase_options.dart';
@@ -12,7 +9,6 @@ import 'package:shop_app/screens/splash/splash_screen.dart';
 import 'package:shop_app/screens/tasks/add_task_screen.dart';
 import 'package:shop_app/screens/tasks/task_details_screen.dart';
 import 'package:shop_app/screens/tasks/tasks_screen.dart';
-import 'package:shop_app/screens/user_state_screen.dart';
 import 'package:shop_app/screens/workers/worker_account_screen.dart';
 import 'package:shop_app/screens/workers/workers_screen.dart';
 import 'package:shop_app/utils/styles.dart';
@@ -36,10 +32,9 @@ class CompanyApp extends StatelessWidget {
         'ForgetPasswordScreen': (context) => const ForgetPasswordScreen(),
         'TasksScreen': (context) => const TasksScreen(),
         'AddTaskScreen': (context) => const AddTaskScreen(),
-        'WorkersScreen': (context) => const WorkersScreen(),
+        'WorkersScreen': (context) =>  WorkersScreen(),
         'WorkerAccountScreen': (context) => const WorkerAccountScreen(),
         'TaskDetailsScreen': (context) => TaskDetailsScreen(),
-        'UserStateScreen': (context) => const UserStateScreen(),
         'SpalshScreen':(context) => const SpalshScreen()
       },
       initialRoute: 'SpalshScreen', //bad

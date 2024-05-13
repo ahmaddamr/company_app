@@ -344,6 +344,7 @@ class _LoginScreenState extends State<SignUpScreen>
                                     .child(Id + '.jpg');
                                 await url.putFile(imgFile);
                                 photoUrl = await url.getDownloadURL();
+                                // function to create a collection to save data on fireStore
                                 FirebaseFirestore.instance
                                     .collection('users')
                                     .doc(Id)

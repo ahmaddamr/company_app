@@ -9,7 +9,6 @@ class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});
   static String id = 'AddTaskScreen';
 
-
   @override
   State<AddTaskScreen> createState() => _AddTaskScreenState();
 }
@@ -29,15 +28,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   GlobalKey<FormState> formKey = GlobalKey();
   DateTime? pickup;
 
-  List<String> categoryList = [
-    'Business',
-    'Programming',
-    'It',
-    'Hr',
-    'Marketing',
-    'Design',
-    'Accounting'
-  ];
   @override
   void dispose() {
     _categoryController.dispose();
@@ -105,7 +95,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                   // height: MediaQuery.of(context).size.height * 0.4,
                                   child: ListView.builder(
                                     shrinkWrap: true,
-                                    itemCount: categoryList.length,
+                                    itemCount: Styles.categoryList.length,
                                     itemBuilder: (context, index) {
                                       return Row(
                                         children: [
@@ -117,12 +107,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                             onPressed: () {
                                               setState(() {
                                                 _categoryController.text =
-                                                    categoryList[index];
+                                                    Styles.categoryList[index];
                                               });
                                               Navigator.pop(context);
                                             },
                                             child: Text(
-                                              categoryList[index],
+                                              Styles.categoryList[index],
                                               style:
                                                   const TextStyle(fontSize: 18),
                                             ),
@@ -307,7 +297,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     pickup = await showDatePicker(
       context: context,
       firstDate: DateTime.now().subtract(
-      const Duration(days: 0),
+        const Duration(days: 0),
       ),
       lastDate: DateTime(2100),
       initialDate: DateTime.now(),
