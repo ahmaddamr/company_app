@@ -91,7 +91,7 @@ class _WorkersAccountWidgetState extends State<WorkersAccountWidget> {
                     style: Styles.listTitle.copyWith(fontSize: 22),
                   ),
                   Text(
-                    loggedAt,
+                    'Account Created At: ${loggedAt}',
                     style: Styles.listTitle
                         .copyWith(color: Styles.darkBlue, fontSize: 17),
                   ),
@@ -196,7 +196,7 @@ class _WorkersAccountWidgetState extends State<WorkersAccountWidget> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 130, vertical: 30),
+                        horizontal: 120, vertical: 30),
                     child: CustomButton(
                         text: 'Logout',
                         backgroundColor: Styles.buttonColor,

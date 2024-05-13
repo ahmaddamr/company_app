@@ -1,9 +1,14 @@
 // ignore_for_file: avoid_print
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shop_app/screens/auth/widgets/custom_button.dart';
+import 'package:shop_app/screens/auth/widgets/sign_errors_dialoge.dart';
 import 'package:shop_app/screens/tasks/widgets/drawer_widget.dart';
 import 'package:shop_app/utils/styles.dart';
+import 'package:uuid/uuid.dart';
 
 class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});
@@ -27,6 +32,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   GlobalKey<FormState> formKey = GlobalKey();
   DateTime? pickup;
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   void dispose() {
@@ -268,7 +274,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 25.0, horizontal: 150),
+                          vertical: 25.0, horizontal: 120),
                       child: CustomButton(
                           text: 'upload',
                           backgroundColor: Styles.buttonColor,
@@ -280,6 +286,25 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                               print('valid');
                             } else {
                               print('not valid');
+                            }
+                            final isValid = formKey.currentState!.validate();
+                            if (isValid) {
+                              if (_dateController.text == 'Pick up a Date' ||
+                                  _categoryController.text == 'Task Category') {
+                                return const SignErrorsDialoge(
+                                  error: 'PLease pickup Date and category',
+                                );
+                              }
+                              addTaskFirebase();
+                              Fluttertoast.showToast(
+                                  msg: "Task uploaded Succesfuly",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  backgroundColor: Colors.green,
+                                  textColor: Colors.white,
+                                  fontSize: 18.0);
+                            } else {
+                              const Text('Form not Valid');
                             }
                           }),
                     ),
@@ -308,5 +333,20 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             '${pickup!.year}-${pickup!.month}-${pickup!.day}';
       });
     }
+  }
+
+  void addTaskFirebase() async {
+    User? user = auth.currentUser;
+    final String id = user!.uid;
+    final taskId = Uuid().v4();
+    await FirebaseFirestore.instance.collection('tasks').doc(taskId).set({
+      'taskId': 'task',
+      'uploadedBy': id,
+      'taskTilte': _titleController.text,
+      'taskDerscreption': _descriptionController.text,
+      'deadlineDate': _dateController.text,
+      'taskCategory': _categoryController.text,
+      'createdAt': Timestamp.now()
+    });
   }
 }
