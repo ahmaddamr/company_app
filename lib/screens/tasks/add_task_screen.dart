@@ -283,6 +283,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           onPressed: () {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
+
                               print('valid');
                             } else {
                               print('not valid');
@@ -291,9 +292,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                             if (isValid) {
                               if (_dateController.text == 'Pick up a Date' ||
                                   _categoryController.text == 'Task Category') {
-                                return const SignErrorsDialoge(
-                                  error: 'PLease pickup Date and category',
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return showError();
+                                  },
                                 );
+                                return;
                               }
                               addTaskFirebase();
                               Fluttertoast.showToast(
@@ -303,6 +308,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                   backgroundColor: Colors.green,
                                   textColor: Colors.white,
                                   fontSize: 18.0);
+                                  _categoryController.clear();
+                                  _dateController.clear();
+                                  _descriptionController.clear();
+                                  _titleController.clear();
                             } else {
                               const Text('Form not Valid');
                             }
@@ -340,13 +349,47 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     final String id = user!.uid;
     final taskId = Uuid().v4();
     await FirebaseFirestore.instance.collection('tasks').doc(taskId).set({
-      'taskId': 'task',
+      'taskId': taskId,
       'uploadedBy': id,
-      'taskTilte': _titleController.text,
+      'taskTitle': _titleController.text,
       'taskDerscreption': _descriptionController.text,
       'deadlineDate': _dateController.text,
       'taskCategory': _categoryController.text,
-      'createdAt': Timestamp.now()
+      'createdAt': Timestamp.now(),
+      'isDone':false
     });
+  }
+
+  Widget showError() {
+    return AlertDialog(
+      title: Row(
+        children: [
+          Image.network(
+            'https://cdn-icons-png.flaticon.com/128/14090/14090276.png',
+            height: 25,
+            width: 25,
+          ),
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text('Error'),
+          )
+        ],
+      ),
+      content: const Text(
+        'please pickUp Date And Category',
+        style: Styles.listTile,
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text(
+            'Cancel',
+            style: TextStyle(fontSize: 15),
+          ),
+        ),
+      ],
+    );
   }
 }

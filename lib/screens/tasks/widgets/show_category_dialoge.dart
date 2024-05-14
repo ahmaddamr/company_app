@@ -27,7 +27,10 @@ class ShowCategoryWidget extends StatelessWidget {
                   color: Colors.red,
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () 
+                  {
+                    
+                  },
                   child: Text(
                     Styles.categoryList[index],
                     style: const TextStyle(fontSize: 18),

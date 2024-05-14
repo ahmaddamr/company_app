@@ -1,24 +1,38 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shop_app/utils/styles.dart';
 
 class TasksWidget extends StatelessWidget {
-  const TasksWidget({super.key});
+  const TasksWidget(
+      {super.key,
+      required this.title,
+      required this.subTitle,
+      required this.taskId,
+      required this.uploadedBy,
+      required this.isDone});
+  final String title;
+  final String subTitle;
+  final String taskId;
+  final String uploadedBy;
+  final bool isDone;
 
   @override
   Widget build(BuildContext context) {
+    final FirebaseAuth auth = FirebaseAuth.instance;
     return Card(
       elevation: 5,
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       child: ListTile(
-        title: const Text(
-          'title',
+        title: Text(
+          title,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: Styles.listTitle,
         ),
-        onTap: () 
-        {
-        Navigator.of(context).pushNamed('TaskDetailsScreen');
+        onTap: () {
+          Navigator.of(context).pushNamed('TaskDetailsScreen');
         },
         onLongPress: () {
           showDialog(
@@ -36,7 +50,25 @@ class TasksWidget extends StatelessWidget {
                         size: 25,
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          User? user = auth.currentUser;
+                          String uid = user!.uid;
+                          if (uid == uploadedBy) {
+                            FirebaseFirestore.instance
+                                .collection('tasks')
+                                .doc(taskId)
+                                .delete();
+                            Navigator.pop(context);
+                          } else {
+                            (Fluttertoast.showToast(
+                                msg: "You dont Have access to Delete This Task",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 18.0));
+                          }
+                        },
                         child: const Text(
                           'Delete',
                           style: TextStyle(color: Colors.red, fontSize: 20),
@@ -59,22 +91,21 @@ class TasksWidget extends StatelessWidget {
             ),
           ),
           child: CircleAvatar(
-            radius: 20,
-            child: Image.network(
-                'https://cdn-icons-png.flaticon.com/128/5290/5290109.png'),
-            // 'https://cdn-icons-png.flaticon.com/128/50/50037.png'
-          ),
+              radius: 20,
+              child: Image.network(isDone
+                  ? 'https://cdn-icons-png.flaticon.com/128/5290/5290109.png'
+                  : 'https://cdn-icons-png.flaticon.com/128/50/50037.png')),
         ),
-        subtitle: const Column(
+        subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
+            const Icon(
               Icons.linear_scale,
               color: Styles.buttonColor,
             ),
             Text(
-              'Subtitle/done',
-              style: TextStyle(
+              subTitle,
+              style: const TextStyle(
                 fontSize: 15,
               ),
               maxLines: 2,
