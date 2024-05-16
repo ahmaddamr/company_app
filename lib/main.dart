@@ -34,7 +34,7 @@ class CompanyApp extends StatelessWidget {
         'AddTaskScreen': (context) => const AddTaskScreen(),
         'WorkersScreen': (context) =>  WorkersScreen(),
         'WorkerAccountScreen': (context) => const WorkerAccountScreen(),
-        'TaskDetailsScreen': (context) => TaskDetailsScreen(),
+        // 'TaskDetailsScreen': (context) => TaskDetailsScreen(),
         'SpalshScreen':(context) => const SpalshScreen()
       },
       initialRoute: 'SpalshScreen', //bad

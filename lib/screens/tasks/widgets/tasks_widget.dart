@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shop_app/screens/tasks/task_details_screen.dart';
 import 'package:shop_app/utils/styles.dart';
 
 class TasksWidget extends StatelessWidget {
@@ -32,7 +33,15 @@ class TasksWidget extends StatelessWidget {
           style: Styles.listTitle,
         ),
         onTap: () {
-          Navigator.of(context).pushNamed('TaskDetailsScreen');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TaskDetailsScreen(
+                taskId: taskId,
+                uploadedBy: uploadedBy,
+              ),
+            ),
+          );
         },
         onLongPress: () {
           showDialog(
@@ -60,13 +69,16 @@ class TasksWidget extends StatelessWidget {
                                 .delete();
                             Navigator.pop(context);
                           } else {
-                            (Fluttertoast.showToast(
-                                msg: "You dont Have access to Delete This Task",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.CENTER,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                fontSize: 18.0));
+                            (
+                              Fluttertoast.showToast(
+                                  msg:
+                                      "You dont Have access to Delete This Task",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 18.0),
+                            );
                           }
                         },
                         child: const Text(

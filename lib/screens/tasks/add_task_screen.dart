@@ -32,6 +32,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   GlobalKey<FormState> formKey = GlobalKey();
   DateTime? pickup;
+  Timestamp? deadlineDateTimestamp;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
@@ -354,6 +355,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       'taskTitle': _titleController.text,
       'taskDerscreption': _descriptionController.text,
       'deadlineDate': _dateController.text,
+      'deadlineDateTimestamp':deadlineDateTimestamp,
       'taskCategory': _categoryController.text,
       'createdAt': Timestamp.now(),
       'isDone':false

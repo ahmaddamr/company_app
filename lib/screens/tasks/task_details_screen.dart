@@ -1,11 +1,17 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shop_app/screens/auth/widgets/custom_button.dart';
-import 'package:shop_app/screens/tasks/widgets/drawer_widget.dart';
 import 'package:shop_app/utils/styles.dart';
 
 class TaskDetailsScreen extends StatefulWidget {
+  //dependecy injection
+  final String taskId;
+  final String uploadedBy;
+
+  const TaskDetailsScreen(
+      {super.key, required this.taskId, required this.uploadedBy});
   @override
   State<TaskDetailsScreen> createState() => _TaskDetailsScreenState();
 }
@@ -16,6 +22,61 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
       TextEditingController(text: '');
 
   bool isCommenting = false;
+  String? authorName;
+  String? authorPosition;
+  String? taskDerscreption;
+  String? taskTitle;
+  String? imageUrl;
+  bool? isDone;
+  bool isDeadlineAvailable = false;
+  Timestamp? postedAtTimestamp;
+  Timestamp? deadlineDateTimestamp;
+  String? deadlineDate;
+  String? postedAt;
+  final FirebaseAuth auth = FirebaseAuth.instance ;
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  void getData() async {
+    final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.uploadedBy)
+        .get();
+    if (userDoc == null) {
+      return;
+    } else {
+      setState(() {
+        authorName = userDoc.get('name');
+        authorPosition = userDoc.get('position');
+        imageUrl = userDoc.get('userImage');
+      });
+    }
+    final DocumentSnapshot taskDatabase = await FirebaseFirestore.instance
+        .collection('tasks')
+        .doc(widget.taskId)
+        .get();
+    if (taskDatabase == null) {
+      return;
+    } else {
+      print('test1');
+      taskDerscreption = taskDatabase.get('taskDerscreption');
+      isDone = await taskDatabase.get('isDone');
+      deadlineDate = await taskDatabase.get('deadlineDate');
+      deadlineDateTimestamp = await taskDatabase.get('deadlineDateTimestamp');
+      postedAtTimestamp = await taskDatabase.get('createdAt');
+      var postDate = postedAtTimestamp!.toDate();
+      postedAt = '${postDate.year}-${postDate.month}-${postDate.day}';
+      var date = deadlineDate;
+      var isDeadlineAvailable = date;
+      // postedAt = '${postDate.year}-${postDate.month}-${postDate.day}';
+      print('test2');
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +90,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
         child: Column(
           children: [
             Text(
-              'Develop An App',
+              taskTitle ?? '',
               style:
                   Styles.authenticationText30.copyWith(color: Styles.darkBlue),
             ),
@@ -53,26 +114,26 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                         SizedBox(
                           width: MediaQuery.of(context).size.width * .2,
                         ),
-                        CircleAvatar(
-                          radius: 25,
-                          child: Image.network(
-                            'https://cdn-icons-png.flaticon.com/128/3135/3135715.png',
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.fill,
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CircleAvatar(
+                            radius: 25,
+                            backgroundImage: NetworkImage(imageUrl == null
+                                ? 'https://cdn-icons-png.flaticon.com/128/3135/3135715.png'
+                                : imageUrl!),
                           ),
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Mark Morph',
+                              authorName ?? '',
                               overflow: TextOverflow.clip,
                               style: Styles.listTitle.copyWith(
                                   fontSize: 16, fontStyle: FontStyle.italic),
                             ),
                             Text(
-                              'Web Designer',
+                              authorPosition == null ? '' : authorPosition!,
                               overflow: TextOverflow.clip,
                               style: Styles.listTitle.copyWith(
                                   fontSize: 16, fontStyle: FontStyle.italic),
@@ -100,13 +161,16 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                             // SizedBox(
                             //   width: MediaQuery.of(context).size.width * .45,
                             // ),
-                            Text(
-                              '9/7/2021',
-                              overflow: TextOverflow.ellipsis,
-                              style: Styles.listTitle.copyWith(
-                                  color: Styles.darkBlue,
-                                  fontSize: 16,
-                                  fontStyle: FontStyle.italic),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                postedAt ?? '',
+                                overflow: TextOverflow.ellipsis,
+                                style: Styles.listTitle.copyWith(
+                                    color: Styles.darkBlue,
+                                    fontSize: 16,
+                                    fontStyle: FontStyle.italic),
+                              ),
                             ),
                           ],
                         ),
@@ -124,21 +188,24 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                             // SizedBox(
                             //   width: MediaQuery.of(context).size.width * .45,
                             // ),
-                            Text(
-                              '9/7/2021',
-                              overflow: TextOverflow.ellipsis,
-                              style: Styles.listTitle.copyWith(
-                                  color: Colors.red,
-                                  fontSize: 16,
-                                  fontStyle: FontStyle.italic),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                deadlineDate ?? '',
+                                overflow: TextOverflow.ellipsis,
+                                style: Styles.listTitle.copyWith(
+                                    color: Colors.red,
+                                    fontSize: 16,
+                                    fontStyle: FontStyle.italic),
+                              ),
                             ),
                           ],
                         ),
-                        Text(
-                          'Still Have Time',
-                          style: Styles.listTitle
-                              .copyWith(color: Colors.green, fontSize: 17),
-                        ),
+                        // Text(
+                        //   isDeadlineAvailable?"Still Have enough Time":"No Time Lift",
+                        //   style: Styles.listTitle
+                        //       .copyWith(color: Colors.green, fontSize: 17),
+                        // ),
                       ],
                     ),
                     const Divider(
@@ -161,14 +228,38 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                          Text(
-                            'Done',
-                            style: Styles.listTitle
-                                .copyWith(color: Styles.darkBlue, fontSize: 17),
+                          TextButton(
+                            onPressed: () {
+                              User? user = auth.currentUser;
+                              String uid = user!.uid;
+                              if (uid == widget.uploadedBy) {
+                                FirebaseFirestore.instance
+                                  .collection('tasks')
+                                  .doc(widget.taskId)
+                                  .update({'isDone': true});
+                                  getData();
+                              }else
+                              {
+                                Fluttertoast.showToast(
+                                  msg:
+                                      "You cant perform this Action",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 18.0);
+                              }
+                              
+                            },
+                            child: Text(
+                              'Done',
+                              style: Styles.listTitle.copyWith(
+                                  color: Styles.darkBlue, fontSize: 17),
+                            ),
                           ),
-                          const Opacity(
-                            opacity: 1,
-                            child: Icon(
+                          Opacity(
+                            opacity: isDone == true ? 1 : 0,
+                            child: const Icon(
                               Icons.check_box,
                               color: Colors.green,
                             ),
@@ -176,14 +267,37 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                           const SizedBox(
                             width: 35,
                           ),
-                          Text(
-                            'Not Done yet',
-                            style: Styles.listTitle
-                                .copyWith(color: Styles.darkBlue, fontSize: 17),
+                          TextButton(
+                            onPressed: () {
+                              User? user = auth.currentUser;
+                              String uid = user!.uid;
+                              if (uid == widget.uploadedBy) {
+                                FirebaseFirestore.instance
+                                  .collection('tasks')
+                                  .doc(widget.taskId)
+                                  .update({'isDone': false});
+                                  getData();
+                              }else
+                              {
+                                Fluttertoast.showToast(
+                                  msg:
+                                      "You cant perform this Action",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 18.0);
+                              }
+                            },
+                            child: Text(
+                              'Not Done yet',
+                              style: Styles.listTitle.copyWith(
+                                  color: Styles.darkBlue, fontSize: 17),
+                            ),
                           ),
-                          const Opacity(
-                            opacity: 0,
-                            child: Icon(
+                          Opacity(
+                            opacity: isDone == false ? 1 : 0,
+                            child: const Icon(
                               Icons.check_box,
                               color: Colors.red,
                             ),
@@ -199,7 +313,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          'Task Description:',
+                          taskDerscreption ?? '',
                           style: Styles.listTitle.copyWith(
                               color: Styles.darkBlue,
                               fontSize: 20,
