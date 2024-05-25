@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shop_app/screens/auth/widgets/custom_button.dart';
@@ -122,33 +123,34 @@ class _LoginScreenState extends State<SignUpScreen>
                           obscureText: false,
                         ),
                       ),
+                      SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.010,
+                      ),
                       Flexible(
+                        // flex: 1,
                         child: Stack(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(3.0),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.2,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.1,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Colors.white,
-                                  border:
-                                      Border.all(color: Colors.white, width: 1),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: imgFile == null
-                                      ? Image.network(
-                                          'https://cdn-icons-png.flaticon.com/128/3177/3177440.png',
-                                          fit: BoxFit.fill,
-                                        )
-                                      : Image.file(
-                                          imgFile,
-                                          fit: BoxFit.fill,
-                                        ),
-                                ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.2,
+                              height:
+                                  MediaQuery.of(context).size.height * 0.1,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Colors.white,
+                                border:
+                                    Border.all(color: Colors.white, width: 1),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: imgFile == null
+                                    ? Image.network(
+                                        'https://cdn-icons-png.flaticon.com/128/3177/3177440.png',
+                                        fit: BoxFit.fill,
+                                      )
+                                    : Image.file(
+                                        imgFile,
+                                        fit: BoxFit.fill,
+                                      ),
                               ),
                             ),
                             Positioned(
@@ -322,9 +324,14 @@ class _LoginScreenState extends State<SignUpScreen>
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
                               if (imgFile == null) {
-                                const SignErrorsDialoge(
-                                  error: 'Please pickup an image',
-                                );
+                                Fluttertoast.showToast(
+                                  msg:
+                                      "You Must Choose a Photo",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 18.0);
                               }
                               setState(() {
                                 isLoading = true;

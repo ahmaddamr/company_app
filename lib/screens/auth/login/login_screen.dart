@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_print
-import 'dart:ffi';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
@@ -7,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:shop_app/screens/auth/widgets/custom_button.dart';
 import 'package:shop_app/screens/auth/widgets/custom_text_field.dart';
 import 'package:shop_app/screens/auth/widgets/sign_errors_dialoge.dart';
-import 'package:shop_app/screens/tasks/tasks_screen.dart';
 import 'package:shop_app/utils/styles.dart';
 
 class LoginScreen extends StatefulWidget {
