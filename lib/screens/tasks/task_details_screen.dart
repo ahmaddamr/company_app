@@ -33,7 +33,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
   Timestamp? deadlineDateTimestamp;
   String? deadlineDate;
   String? postedAt;
-  final FirebaseAuth auth = FirebaseAuth.instance ;
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -66,7 +66,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
       taskDerscreption = taskDatabase.get('taskDerscreption');
       isDone = await taskDatabase.get('isDone');
       deadlineDate = await taskDatabase.get('deadlineDate');
-      deadlineDateTimestamp = await taskDatabase.get('deadlineDateTimestamp');
+      // deadlineDateTimestamp = await taskDatabase.get('deadlineDateTimestamp');
       postedAtTimestamp = await taskDatabase.get('createdAt');
       var postDate = postedAtTimestamp!.toDate();
       postedAt = '${postDate.year}-${postDate.month}-${postDate.day}';
@@ -234,22 +234,19 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                               String uid = user!.uid;
                               if (uid == widget.uploadedBy) {
                                 FirebaseFirestore.instance
-                                  .collection('tasks')
-                                  .doc(widget.taskId)
-                                  .update({'isDone': true});
-                                  getData();
-                              }else
-                              {
+                                    .collection('tasks')
+                                    .doc(widget.taskId)
+                                    .update({'isDone': true});
+                                getData();
+                              } else {
                                 Fluttertoast.showToast(
-                                  msg:
-                                      "You cant perform this Action",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.CENTER,
-                                  backgroundColor: Colors.red,
-                                  textColor: Colors.white,
-                                  fontSize: 18.0);
+                                    msg: "You cant perform this Action",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 18.0);
                               }
-                              
                             },
                             child: Text(
                               'Done',
@@ -273,20 +270,18 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                               String uid = user!.uid;
                               if (uid == widget.uploadedBy) {
                                 FirebaseFirestore.instance
-                                  .collection('tasks')
-                                  .doc(widget.taskId)
-                                  .update({'isDone': false});
-                                  getData();
-                              }else
-                              {
+                                    .collection('tasks')
+                                    .doc(widget.taskId)
+                                    .update({'isDone': false});
+                                getData();
+                              } else {
                                 Fluttertoast.showToast(
-                                  msg:
-                                      "You cant perform this Action",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.CENTER,
-                                  backgroundColor: Colors.red,
-                                  textColor: Colors.white,
-                                  fontSize: 18.0);
+                                    msg: "You cant perform this Action",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 18.0);
                               }
                             },
                             child: Text(
@@ -313,7 +308,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          taskDerscreption ?? '',
+                          'Descreption:',
                           style: Styles.listTitle.copyWith(
                               color: Styles.darkBlue,
                               fontSize: 20,
@@ -321,94 +316,107 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                         ),
                       ),
                     ),
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 500),
-                      child: isCommenting
-                          ? Row(
-                              children: [
-                                Flexible(
-                                  flex: 2,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: TextFormField(
-                                      maxLines: 4,
-                                      decoration: const InputDecoration(
-                                        hintText: 'description',
-                                        filled: true,
-                                        // fillColor: Theme.of(context).scaffoldBackgroundColor,
-                                        focusedBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Styles.buttonColor),
-                                        ),
-                                      ),
-                                      controller: _descriptionController,
-                                      style: const TextStyle(
-                                          color: Styles.darkBlue),
-                                      maxLength: 100,
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return 'Field is empty';
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                      onSaved: (p0) {},
-                                      obscureText: false,
-                                    ),
-                                  ),
-                                ),
-                                Flexible(
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 25.0),
-                                        child: CustomButton(
-                                            text: 'Post',
-                                            backgroundColor: Styles.buttonColor,
-                                            borderSideColor: Colors.transparent,
-                                            style: Styles.authenticationText15,
-                                            onPressed: () {}),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0),
-                                        child: CustomButton(
-                                            text: 'Cancel',
-                                            backgroundColor: Styles.buttonColor,
-                                            borderSideColor: Colors.transparent,
-                                            style: Styles.authenticationText15,
-                                            onPressed: () {
-                                              setState(() {
-                                                isCommenting = !isCommenting;
-                                              });
-                                            }),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            )
-                          : Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 70.0, vertical: 50),
-                              child: CustomButton(
-                                  text: 'Add A Commment',
-                                  backgroundColor: Styles.buttonColor,
-                                  borderSideColor: Colors.transparent,
-                                  style: Styles.authenticationText15,
-                                  onPressed: () {
-                                    setState(() {
-                                      isCommenting = !isCommenting;
-                                    });
-                                  }),
-                            ),
-                    )
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          taskDerscreption ?? '',
+                          style: Styles.listTitle.copyWith(
+                            color: Colors.black,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // AnimatedSwitcher(
+                    //   duration: const Duration(milliseconds: 500),
+                    //   child: isCommenting
+                    //       ? Row(
+                    //           children: [
+                    //             Flexible(
+                    //               flex: 2,
+                    //               child: Padding(
+                    //                 padding: const EdgeInsets.all(8.0),
+                    //                 child: TextFormField(
+                    //                   maxLines: 4,
+                    //                   decoration: const InputDecoration(
+                    //                     hintText: 'description',
+                    //                     filled: true,
+                    //                     // fillColor: Theme.of(context).scaffoldBackgroundColor,
+                    //                     focusedBorder: UnderlineInputBorder(
+                    //                       borderSide: BorderSide(
+                    //                           color: Styles.buttonColor),
+                    //                     ),
+                    //                   ),
+                    //                   controller: _descriptionController,
+                    //                   style: const TextStyle(
+                    //                       color: Styles.darkBlue),
+                    //                   maxLength: 100,
+                    //                   validator: (value) {
+                    //                     if (value!.isEmpty) {
+                    //                       return 'Field is empty';
+                    //                     } else {
+                    //                       return null;
+                    //                     }
+                    //                   },
+                    //                   onSaved: (p0) {},
+                    //                   obscureText: false,
+                    //                 ),
+                    //               ),
+                    //             ),
+                    //             Flexible(
+                    //               child: Column(
+                    //                 mainAxisAlignment:
+                    //                     MainAxisAlignment.spaceAround,
+                    //                 children: [
+                    //                   Padding(
+                    //                     padding: const EdgeInsets.symmetric(
+                    //                         horizontal: 25.0),
+                    //                     child: CustomButton(
+                    //                         text: 'Post',
+                    //                         backgroundColor: Styles.buttonColor,
+                    //                         borderSideColor: Colors.transparent,
+                    //                         style: Styles.authenticationText15,
+                    //                         onPressed: () {}),
+                    //                   ),
+                    //                   const SizedBox(
+                    //                     height: 10,
+                    //                   ),
+                    //                   Padding(
+                    //                     padding: const EdgeInsets.symmetric(
+                    //                         horizontal: 20.0),
+                    //                     child: CustomButton(
+                    //                         text: 'Cancel',
+                    //                         backgroundColor: Styles.buttonColor,
+                    //                         borderSideColor: Colors.transparent,
+                    //                         style: Styles.authenticationText15,
+                    //                         onPressed: () {
+                    //                           setState(() {
+                    //                             isCommenting = !isCommenting;
+                    //                           });
+                    //                         }),
+                    //                   )
+                    //                 ],
+                    //               ),
+                    //             )
+                    //           ],
+                    //         )
+                    //       : Padding(
+                    //           padding: const EdgeInsets.symmetric(
+                    //               horizontal: 70.0, vertical: 50),
+                    //           child: CustomButton(
+                    //               text: 'Add A Commment',
+                    //               backgroundColor: Styles.buttonColor,
+                    //               borderSideColor: Colors.transparent,
+                    //               style: Styles.authenticationText15,
+                    //               onPressed: () {
+                    //                 setState(() {
+                    //                   isCommenting = !isCommenting;
+                    //                 });
+                    //               }),
+                    //         ),
+                    // )
                   ],
                 ),
               ),
