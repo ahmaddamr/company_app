@@ -430,7 +430,7 @@ class _LoginScreenState extends State<SignUpScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               InkWell(
-                onTap: pickImgWithCamera,
+                onTap: ()=> pickImgWithCamera(context),
                 child: const Row(
                   children: [
                     Icon(
@@ -475,7 +475,7 @@ class _LoginScreenState extends State<SignUpScreen>
     );
   }
 
-  void pickImgWithCamera() async {
+  void pickImgWithCamera(context) async {
     XFile? pickedfile = await ImagePicker()
         .pickImage(source: ImageSource.camera, maxHeight: 1080, maxWidth: 1080);
     if (pickedfile != null) {
@@ -483,10 +483,10 @@ class _LoginScreenState extends State<SignUpScreen>
         imgFile = File(pickedfile.path);
       });
     }
-    // if (pickedfile != null) {
-    //   cropImg(pickedfile.path);
-    // }
-    // ignore: use_build_context_synchronously
+    if (pickedfile != null) {
+      cropImg(pickedfile.path);
+    }
+    
     Navigator.pop(context);
   }
 
@@ -510,7 +510,7 @@ class _LoginScreenState extends State<SignUpScreen>
         .cropImage(sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
     if (croppedFile != null) {
       setState(() {
-        imgFile = croppedFile;
+        imgFile = File(croppedFile.path);
       });
     }
   }
