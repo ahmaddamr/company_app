@@ -50,7 +50,7 @@ class _TasksScreenState extends State<TasksScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.connectionState == ConnectionState.active) {
-            if (snapshot.data!.docs.isNotEmpty) {
+            if (snapshot.data != null && snapshot.data!.docs.isNotEmpty) {
               return ListView.builder(
                 physics: const BouncingScrollPhysics(),
                 itemCount: snapshot.data!.docs.length,
@@ -65,7 +65,7 @@ class _TasksScreenState extends State<TasksScreen> {
                 },
               );
             } else {
-              return const Center(child: Text('docs are Empty'));
+              return const Center(child: Text('Tasks are Empty'));
             }
           }
           return const Center(child: Text('An Error Happened'));
