@@ -1,7 +1,8 @@
 // ignore_for_file: avoid_print
-
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shop_app/screens/auth/widgets/custom_button.dart';
 import 'package:shop_app/screens/auth/widgets/custom_text_field.dart';
 import 'package:shop_app/utils/styles.dart';
@@ -17,7 +18,7 @@ class _LoginScreenState extends State<ForgetPasswordScreen>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
-  late TextEditingController _passController = TextEditingController(text: '');
+  late TextEditingController _emailController = TextEditingController(text: '');
   bool isSecurePassword = true;
   GlobalKey<FormState> formKey = GlobalKey();
   // ignore: unused_field
@@ -26,7 +27,7 @@ class _LoginScreenState extends State<ForgetPasswordScreen>
   @override
   void dispose() {
     _animationController.dispose();
-    _passController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -73,6 +74,20 @@ class _LoginScreenState extends State<ForgetPasswordScreen>
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: ListView(
                 children: [
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pushReplacementNamed('LoginScreen');
+                      },
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
+                        size: 35,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.1,
                   ),
@@ -82,8 +97,9 @@ class _LoginScreenState extends State<ForgetPasswordScreen>
                   ),
                   CustomTextFormField(
                     // suffixIcon: passwordShow(),
+
                     obscureText: false,
-                    controller: _passController,
+                    controller: _emailController,
                     hint: 'Email Address',
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -101,18 +117,21 @@ class _LoginScreenState extends State<ForgetPasswordScreen>
                     height: MediaQuery.of(context).size.height * 0.05,
                   ),
                   CustomButton(
-                      text: 'Reset',
-                      backgroundColor: Styles.buttonColor,
-                      borderSideColor: Colors.transparent,
-                      style: Styles.authenticationText15,
-                      onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          formKey.currentState!.save();
-                          print('valid');
-                        } else {
-                          print('not valid');
-                        }
-                      }),
+                    text: 'Reset',
+                    backgroundColor: Styles.buttonColor,
+                    borderSideColor: Colors.transparent,
+                    style: Styles.authenticationText15,
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        formKey.currentState!.save();
+                        resetPassword();
+                        print('valid');
+                        _emailController.clear();
+                      } else {
+                        print('not valid');
+                      }
+                    },
+                  ),
                 ],
               ),
             ),
@@ -120,5 +139,33 @@ class _LoginScreenState extends State<ForgetPasswordScreen>
         ),
       ),
     );
+  }
+
+  Future resetPassword() async {
+    try {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
+      );
+      await FirebaseAuth.instance
+          .sendPasswordResetEmail(email: _emailController.text.trim());
+      Fluttertoast.showToast(
+          msg: "email sent Succesfuly",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 18.0);
+      Navigator.pop(context);
+    } on Exception catch (e) {
+      Fluttertoast.showToast(
+          msg: e.toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 18.0);
+    }
   }
 }
