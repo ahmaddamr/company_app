@@ -1,8 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shop_app/screens/auth/widgets/custom_button.dart';
 import 'package:shop_app/utils/styles.dart';
 
 class TaskDetailsScreen extends StatefulWidget {
@@ -18,8 +18,6 @@ class TaskDetailsScreen extends StatefulWidget {
 
 class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
   // const TaskDetailsScreen({super.key});
-  late TextEditingController _descriptionController =
-      TextEditingController(text: '');
 
   bool isCommenting = false;
   String? authorName;
@@ -39,6 +37,26 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
   void initState() {
     super.initState();
     getData();
+  }
+
+  String getRemainingTime(String deadline) {
+    // Ensure the date is in the correct format
+    List<String> dateParts = deadline.split('-');
+    String formattedDeadline = dateParts[0] +
+        '-' +
+        dateParts[1].padLeft(2, '0') +
+        '-' +
+        dateParts[2].padLeft(2, '0');
+    DateTime deadlineDateTime = DateTime.parse(formattedDeadline);
+    Duration difference = deadlineDateTime.difference(DateTime.now());
+
+    if (difference.isNegative) {
+      return "Deadline has passed";
+    } else {
+      int days = difference.inDays;
+      int hours = difference.inHours % 24;
+      return '$days days, $hours hours';
+    }
   }
 
   void getData() async {
@@ -81,9 +99,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      ),
+      appBar: AppBar(backgroundColor: Colors.amber),
       // drawer: const DrawerWidget(),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SingleChildScrollView(
@@ -95,7 +111,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                   Styles.authenticationText30.copyWith(color: Styles.darkBlue),
             ),
             Padding(
-              padding: const EdgeInsets.all(15.0),
+              padding: const EdgeInsets.all(10),
               child: Card(
                 elevation: 5,
                 child: Column(
@@ -105,22 +121,22 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'uploaded by',
-                            style: Styles.listTitle
-                                .copyWith(color: Styles.darkBlue, fontSize: 17),
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * .2,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
                           child: CircleAvatar(
-                            radius: 25,
-                            backgroundImage: NetworkImage(imageUrl == null
-                                ? 'https://cdn-icons-png.flaticon.com/128/3135/3135715.png'
-                                : imageUrl!),
+                            radius: 45,
+                            backgroundColor: Colors.teal,
+                            child: CachedNetworkImage(
+                              imageUrl: imageUrl ??
+                                  'https://cdn-icons-png.flaticon.com/128/3135/3135715.png',
+                              placeholder: (context, url) =>
+                                  CircularProgressIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                              imageBuilder: (context, imageProvider) =>
+                                  CircleAvatar(
+                                radius: 40,
+                                backgroundImage: imageProvider,
+                              ),
+                            ),
                           ),
                         ),
                         Column(
@@ -130,13 +146,15 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                               authorName ?? '',
                               overflow: TextOverflow.clip,
                               style: Styles.listTitle.copyWith(
-                                  fontSize: 16, fontStyle: FontStyle.italic),
+                                fontSize: 16,
+                              ),
                             ),
                             Text(
                               authorPosition == null ? '' : authorPosition!,
                               overflow: TextOverflow.clip,
                               style: Styles.listTitle.copyWith(
-                                  fontSize: 16, fontStyle: FontStyle.italic),
+                                fontSize: 16,
+                              ),
                             ),
                           ],
                         ),
@@ -145,15 +163,29 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                     const Divider(
                       thickness: 1,
                     ),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Date And Time:',
+                          style: Styles.listTitle.copyWith(
+                              color: Styles.darkBlue,
+                              fontSize: 20,
+                              decoration: TextDecoration.underline),
+                        ),
+                      ),
+                    ),
+
                     Column(
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                'uploaded On:',
+                                'Starts at:',
                                 style: Styles.listTitle.copyWith(
                                     color: Styles.darkBlue, fontSize: 17),
                               ),
@@ -175,16 +207,17 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                           ],
                         ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                'Deadline Date:',
+                                'Deadline:',
                                 style: Styles.listTitle.copyWith(
                                     color: Styles.darkBlue, fontSize: 17),
                               ),
                             ),
+
                             // SizedBox(
                             //   width: MediaQuery.of(context).size.width * .45,
                             // ),
@@ -197,6 +230,33 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                                     color: Colors.red,
                                     fontSize: 16,
                                     fontStyle: FontStyle.italic),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Remining Time:',
+                                style: Styles.listTitle.copyWith(
+                                    color: Styles.darkBlue, fontSize: 17),
+                              ),
+                            ),
+
+                            // SizedBox(
+                            //   width: MediaQuery.of(context).size.width * .45,
+                            // ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                deadlineDate != null
+                                    ? getRemainingTime(deadlineDate!)
+                                    : '',
+                                style: Styles.listTitle.copyWith(
+                                    color: Colors.green, fontSize: 17),
                               ),
                             ),
                           ],
@@ -216,7 +276,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          'Done State:',
+                          'Task State:',
                           style: Styles.listTitle.copyWith(
                               color: Styles.darkBlue,
                               fontSize: 20,
@@ -227,6 +287,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           TextButton(
                             onPressed: () {
