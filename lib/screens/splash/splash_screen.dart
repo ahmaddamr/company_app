@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_app/screens/auth/login/login_screen.dart';
+import 'package:shop_app/screens/home_screen.dart';
 import 'package:shop_app/screens/tasks/tasks_screen.dart';
 import 'package:shop_app/utils/styles.dart';
 
@@ -21,7 +22,7 @@ class _SpalshPageState extends State<SpalshScreen> {
   _goNext() {
     FirebaseAuth.instance.currentUser != null
         ? Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const TasksScreen()))
+            MaterialPageRoute(builder: (context) => const HomeScreen()))
         : Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => const LoginScreen()));
   }
@@ -45,7 +46,7 @@ class _SpalshPageState extends State<SpalshScreen> {
               child: Text(
             'Company App',
             style: Styles.authenticationText30.copyWith(color: Styles.darkBlue),
-          )),
+          ),),
         ],
       ),
     );

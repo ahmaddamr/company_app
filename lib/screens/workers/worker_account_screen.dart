@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shop_app/screens/tasks/widgets/drawer_widget.dart';
 import 'package:shop_app/screens/workers/widgets/workers_account_widget.dart';
 
 class WorkerAccountScreen extends StatelessWidget {
@@ -17,7 +16,7 @@ class WorkerAccountScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
       ),
-      drawer: const DrawerWidget(),
+      // drawer: const DrawerWidget(),
       body:  WorkersAccountWidget(userId:uid ,),
     );
   }

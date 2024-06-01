@@ -57,6 +57,7 @@ class _LoginScreenState extends State<LoginScreen>
     return Form(
       key: formKey,
       child: Scaffold(
+        backgroundColor: Colors.white,
         body: Stack(
           children: [
             CachedNetworkImage(

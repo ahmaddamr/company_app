@@ -38,4 +38,5 @@ class Functions {
       throw 'Could not launch $url';
     }
   }
+  
 }

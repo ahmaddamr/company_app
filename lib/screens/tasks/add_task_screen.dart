@@ -5,8 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shop_app/screens/auth/widgets/custom_button.dart';
-import 'package:shop_app/screens/auth/widgets/sign_errors_dialoge.dart';
-import 'package:shop_app/screens/tasks/widgets/drawer_widget.dart';
 import 'package:shop_app/utils/styles.dart';
 import 'package:uuid/uuid.dart';
 
@@ -49,7 +47,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     return Form(
       key: formKey,
       child: Scaffold(
-        drawer: const DrawerWidget(),
+        // drawer: const DrawerWidget(),
         appBar: AppBar(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         ),
