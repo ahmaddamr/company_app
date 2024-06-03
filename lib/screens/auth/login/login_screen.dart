@@ -178,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     .signInWithEmailAndPassword(
                                         email: _emailController.text.trim(),
                                         password: _passController.text.trim());
-                                        Navigator.of(context).pushNamed('TasksScreen');
+                                        Navigator.of(context).pushNamed('HomeScreen');
                               } on FirebaseAuthException catch (e) {
                                 if (e.code == 'user-not-found') {
                                   showDialog(

@@ -4,6 +4,7 @@ import 'package:shop_app/firebase_options.dart';
 import 'package:shop_app/screens/auth/login/forget_password_screen.dart';
 import 'package:shop_app/screens/auth/login/login_screen.dart';
 import 'package:shop_app/screens/auth/signup/signup_screen.dart';
+import 'package:shop_app/screens/check_screen.dart';
 import 'package:shop_app/screens/home_screen.dart';
 import 'package:shop_app/screens/splash/splash_screen.dart';
 import 'package:shop_app/screens/tasks/add_task_screen.dart';
@@ -35,6 +36,7 @@ class CompanyApp extends StatelessWidget {
         'WorkersScreen': (context) => WorkersScreen(),
         'WorkerAccountScreen': (context) => const WorkerAccountScreen(),
         'HomeScreen': (context) => const HomeScreen(),
+        'CheckScreen':(context) => const CheckScreen(),
         // 'TaskDetailsScreen': (context) => TaskDetailsScreen(),
         'SpalshScreen': (context) => const SpalshScreen()
       },

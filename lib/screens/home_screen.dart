@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/screens/check_screen.dart';
 import 'package:shop_app/screens/tasks/add_task_screen.dart';
 import 'package:shop_app/screens/tasks/tasks_screen.dart';
 import 'package:shop_app/screens/tasks/widgets/custom_list_tile.dart';
@@ -17,6 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int currentIndex = 0;
   List<IconData> icons = [
     Icons.task,
+    Icons.check,
     Icons.person,
     Icons.workspace_premium,
     Icons.add_task,
@@ -29,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
         index: currentIndex,
         children: [
           const TasksScreen(),
+          const CheckScreen(),
           const WorkerAccountScreen(),
           WorkersScreen(),
           const AddTaskScreen(),

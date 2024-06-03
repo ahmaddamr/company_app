@@ -20,6 +20,7 @@ class _TasksScreenState extends State<TasksScreen> {
       // drawer: const DrawerWidget(),
       appBar: AppBar(
         // leading: IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             onPressed: () {

@@ -364,7 +364,7 @@ class _LoginScreenState extends State<SignUpScreen>
                                   'phoneNumber': _phoneController.text,
                                   'createdAt': Timestamp.now()
                                 });
-                                Navigator.of(context).pushNamed('TasksScreen');
+                                Navigator.of(context).pushNamed('HomeScreen');
                               } on FirebaseAuthException catch (e) {
                                 if (e.code == 'weak-password') {
                                   showDialog(
