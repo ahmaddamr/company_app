@@ -13,6 +13,7 @@ class WorkerAccountScreen extends StatelessWidget {
     final uid = user!.uid;
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
       ),

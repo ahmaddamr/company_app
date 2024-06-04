@@ -13,6 +13,7 @@ class WorkersScreen extends StatelessWidget {
     return Scaffold(
         // drawer: const DrawerWidget(),
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           title: const Text(
             'All Workers',

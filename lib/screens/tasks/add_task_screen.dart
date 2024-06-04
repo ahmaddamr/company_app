@@ -49,6 +49,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       child: Scaffold(
         // drawer: const DrawerWidget(),
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         ),
         body: Center(
