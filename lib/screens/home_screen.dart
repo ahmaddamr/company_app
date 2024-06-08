@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop_app/screens/check_screen.dart';
+import 'package:shop_app/screens/check/check_screen.dart';
 import 'package:shop_app/screens/tasks/add_task_screen.dart';
 import 'package:shop_app/screens/tasks/tasks_screen.dart';
 import 'package:shop_app/screens/tasks/widgets/custom_list_tile.dart';

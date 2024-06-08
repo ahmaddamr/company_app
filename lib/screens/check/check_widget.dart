@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:shop_app/screens/auth/widgets/sign_errors_dialoge.dart';
 import 'package:shop_app/utils/styles.dart';
@@ -19,6 +21,7 @@ class _CheckWidgetState extends State<CheckWidget> {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   String name = '';
+  String day = '';
   String checkIn = '--/--';
   String checkOut = '--/--';
 
@@ -69,6 +72,7 @@ class _CheckWidgetState extends State<CheckWidget> {
         return;
       } else {
         name = await userDoc.get('name');
+        day = await userDoc.get('createdAt');
         setState(() {});
         User? user = auth.currentUser;
         String uid = user!.uid;
@@ -189,9 +193,9 @@ class _CheckWidgetState extends State<CheckWidget> {
                             innerColor: Styles.buttonColor,
                             key: key,
                             onSubmit: () async {
-                              // Timer(const Duration(seconds: 1), () {
-                              //   key.currentState!.reset();
-                              // });
+                              Timer(const Duration(milliseconds: 500), () {
+                                key.currentState!.reset();
+                              });
                               print(DateFormat('hh:mm').format(DateTime.now()));
                               QuerySnapshot snap = await FirebaseFirestore
                                   .instance
@@ -224,7 +228,8 @@ class _CheckWidgetState extends State<CheckWidget> {
                                     .update({
                                   'CheckIn': checkIn,
                                   'checkOut': DateFormat('hh:mm a')
-                                      .format(DateTime.now())
+                                      .format(DateTime.now()),
+                                    'date':Timestamp.now()
                                 });
                               } catch (e) {
                                 setState(() {
@@ -244,8 +249,11 @@ class _CheckWidgetState extends State<CheckWidget> {
                                   {
                                     'CheckIn': DateFormat('hh:mm a')
                                         .format(DateTime.now()),
+                                    'checkOut': '--/--',
+                                    'date':Timestamp.now()
                                   },
                                 );
+                                key.currentState!.reset();
                               }
                             },
                           );
@@ -257,7 +265,143 @@ class _CheckWidgetState extends State<CheckWidget> {
                         'The Day Has Ended',
                         style: Styles.addTask,
                       ),
-                    )
+                    ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.035,
+              ),
+              Container(
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  'My Attendance:',
+                  style: Styles.addTask,
+                ),
+              ),
+              Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25.0),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        DateFormat('MMMM').format(DateTime.now()),
+                        style: Styles.listTile,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 25.0),
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      child: const Text(
+                        'Pick a Month',
+                        style: Styles.listTile,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(widget.userId)
+                    .collection('Record')
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasData) {
+                    final snap = snapshot.data!.docs;
+                    return ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: snap.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          height: MediaQuery.of(context).size.width / 4.5,
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width / 1,
+                            height: MediaQuery.of(context).size.width / 4.5,
+                            child: Card(
+                              margin: const EdgeInsets.only(top: 5),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25)),
+                              elevation: 10,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Flexible(
+                                    fit: FlexFit.tight,
+                                    child: Container(
+                                      height: 150,
+                                      // width: 10,
+                                      decoration: const BoxDecoration(
+                                        color: Styles.buttonColor,
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(5.0),
+                                          child: Text(
+                                            snap[index].id,
+                                            style: Styles.addTask
+                                                .copyWith(color: Colors.white,fontSize: 15),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 60.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Text(
+                                          'Check In',
+                                          style: Styles.addTask,
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 8.0),
+                                          child: Text(
+                                            snap[index]['CheckIn'],
+                                            style: Styles.listTile,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 50.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Text(
+                                          'Check Out',
+                                          style: Styles.addTask,
+                                        ),
+                                        Text(
+                                          snap[index]['checkOut'],
+                                          style: Styles.listTile,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+              )
             ],
           ),
         ),

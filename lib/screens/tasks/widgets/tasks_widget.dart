@@ -105,7 +105,7 @@ class TasksWidget extends StatelessWidget {
           child: CircleAvatar(
               radius: 20,
               child: Image.network(isDone
-                  ? 'https://cdn-icons-png.flaticon.com/128/5290/5290109.png'
+                  ? 'https://cdn-icons-png.flaticon.com/128/5709/5709755.png'
                   : 'https://cdn-icons-png.flaticon.com/128/50/50037.png')),
         ),
         subtitle: Column(

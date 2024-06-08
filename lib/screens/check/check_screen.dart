@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shop_app/screens/check_widget.dart';
+import 'package:shop_app/screens/check/check_widget.dart';
 
 class CheckScreen extends StatelessWidget {
   const CheckScreen({super.key});
