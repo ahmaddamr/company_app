@@ -288,16 +288,16 @@ class _CheckWidgetState extends State<CheckWidget> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 25.0),
-                    child: Container(
-                      alignment: Alignment.centerRight,
-                      child: const Text(
-                        'Pick a Month',
-                        style: Styles.listTile,
-                      ),
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.only(right: 25.0),
+                  //   child: Container(
+                  //     alignment: Alignment.centerRight,
+                  //     child: const Text(
+                  //       'Pick a Month',
+                  //       style: Styles.listTile,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
               StreamBuilder<QuerySnapshot>(

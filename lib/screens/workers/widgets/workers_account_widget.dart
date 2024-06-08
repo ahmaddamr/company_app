@@ -209,7 +209,7 @@ class _WorkersAccountWidgetState extends State<WorkersAccountWidget> {
                               return LogoutAlertDialoge();
                             },
                           );
-                        }),
+                        },),
                   )
                 ],
               ),
