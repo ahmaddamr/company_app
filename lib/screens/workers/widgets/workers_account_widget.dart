@@ -162,7 +162,7 @@ class _WorkersAccountWidgetState extends State<WorkersAccountWidget> {
                                 phoneNumber: phoneNumber.toString());
                           },
                           child: Image.network(
-                            'https://th.bing.com/th?id=OIF.DZdnRKIuZ%2bBXB73mT2Dj9w&w=162&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7',
+                            'https://cdn-icons-png.flaticon.com/128/4423/4423697.png',
                             width: 40,
                             height: 40,
                           ),
@@ -172,7 +172,7 @@ class _WorkersAccountWidgetState extends State<WorkersAccountWidget> {
                             Functions.openMail(email: email);
                           },
                           child: Image.network(
-                            'https://th.bing.com/th/id/OIP.SChygu1GdIYrC5ZztBThggHaHa?w=190&h=190&c=7&r=0&o=5&dpr=1.3&pid=1.7',
+                            'https://cdn-icons-png.flaticon.com/128/732/732200.png',
                             width: 40,
                             height: 40,
                           ),
@@ -183,7 +183,7 @@ class _WorkersAccountWidgetState extends State<WorkersAccountWidget> {
                                 phoneNumber: phoneNumber.toString());
                           },
                           child: Image.network(
-                            'https://th.bing.com/th/id/OIP.PbBfQPm_v6SBjl-EE1msGAHaHs?w=181&h=188&c=7&r=0&o=5&dpr=1.3&pid=1.7',
+                            'https://cdn-icons-png.flaticon.com/128/152/152851.png',
                             width: 40,
                             height: 40,
                           ),

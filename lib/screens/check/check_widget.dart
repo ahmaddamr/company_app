@@ -229,7 +229,7 @@ class _CheckWidgetState extends State<CheckWidget> {
                                   'CheckIn': checkIn,
                                   'checkOut': DateFormat('hh:mm a')
                                       .format(DateTime.now()),
-                                    'date':Timestamp.now()
+                                  'date': Timestamp.now()
                                 });
                               } catch (e) {
                                 setState(() {
@@ -250,7 +250,7 @@ class _CheckWidgetState extends State<CheckWidget> {
                                     'CheckIn': DateFormat('hh:mm a')
                                         .format(DateTime.now()),
                                     'checkOut': '--/--',
-                                    'date':Timestamp.now()
+                                    'date': Timestamp.now()
                                   },
                                 );
                                 key.currentState!.reset();
@@ -345,8 +345,9 @@ class _CheckWidgetState extends State<CheckWidget> {
                                           padding: const EdgeInsets.all(5.0),
                                           child: Text(
                                             snap[index].id,
-                                            style: Styles.addTask
-                                                .copyWith(color: Colors.white,fontSize: 15),
+                                            style: Styles.addTask.copyWith(
+                                                color: Colors.white,
+                                                fontSize: 15),
                                           ),
                                         ),
                                       ),
