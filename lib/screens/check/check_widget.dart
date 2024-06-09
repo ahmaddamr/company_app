@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
 import 'package:shop_app/screens/auth/widgets/sign_errors_dialoge.dart';
+import 'package:shop_app/services/user_class.dart';
 import 'package:shop_app/utils/styles.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 
@@ -24,12 +24,24 @@ class _CheckWidgetState extends State<CheckWidget> {
   String day = '';
   String checkIn = '--/--';
   String checkOut = '--/--';
+  String location = '';
 
   @override
   void initState() {
     super.initState();
     getUserData();
     getRecord();
+    getLocation();
+  }
+
+  void getLocation() async {
+    List<Placemark> placemark =
+        await placemarkFromCoordinates(UserClass.lat, UserClass.long);
+    setState(() {
+      location =
+          '${placemark[0].street},${placemark[0].administrativeArea},${placemark[0].postalCode},${placemark[0].country}';
+          print(placemark);
+    });
   }
 
   void getRecord() async {
@@ -193,17 +205,34 @@ class _CheckWidgetState extends State<CheckWidget> {
                             innerColor: Styles.buttonColor,
                             key: key,
                             onSubmit: () async {
-                              Timer(const Duration(milliseconds: 500), () {
-                                key.currentState!.reset();
-                              });
-                              print(DateFormat('hh:mm').format(DateTime.now()));
-                              QuerySnapshot snap = await FirebaseFirestore
-                                  .instance
-                                  .collection('users')
-                                  .where('id', isEqualTo: widget.userId)
-                                  .get();
-                              print(snap.docs[0].id);
-                              DocumentSnapshot snap2 =
+                              if (UserClass.lat != 0) {
+                                getLocation();
+                                Timer(const Duration(milliseconds: 500), () {
+                                  key.currentState!.reset();
+                                });
+                                print(
+                                    DateFormat('hh:mm').format(DateTime.now()));
+                                QuerySnapshot snap = await FirebaseFirestore
+                                    .instance
+                                    .collection('users')
+                                    .where('id', isEqualTo: widget.userId)
+                                    .get();
+                                print(snap.docs[0].id);
+                                DocumentSnapshot snap2 =
+                                    await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(snap.docs[0].id)
+                                        .collection('Record')
+                                        .doc(DateFormat('dd MMMM yyyy').format(
+                                          DateTime.now(),
+                                        ))
+                                        .get();
+                                try {
+                                  String checkIn = snap2['CheckIn'];
+                                  setState(() {
+                                    checkOut = DateFormat('hh:mm a')
+                                        .format(DateTime.now());
+                                  });
                                   await FirebaseFirestore.instance
                                       .collection('users')
                                       .doc(snap.docs[0].id)
@@ -211,49 +240,108 @@ class _CheckWidgetState extends State<CheckWidget> {
                                       .doc(DateFormat('dd MMMM yyyy').format(
                                         DateTime.now(),
                                       ))
-                                      .get();
-                              try {
-                                String checkIn = snap2['CheckIn'];
-                                setState(() {
-                                  checkOut = DateFormat('hh:mm a')
-                                      .format(DateTime.now());
-                                });
-                                await FirebaseFirestore.instance
-                                    .collection('users')
-                                    .doc(snap.docs[0].id)
-                                    .collection('Record')
-                                    .doc(DateFormat('dd MMMM yyyy').format(
-                                      DateTime.now(),
-                                    ))
-                                    .update({
-                                  'CheckIn': checkIn,
-                                  'checkOut': DateFormat('hh:mm a')
-                                      .format(DateTime.now()),
-                                  'date': Timestamp.now()
-                                });
-                              } catch (e) {
-                                setState(() {
-                                  checkIn = DateFormat('hh:mm a')
-                                      .format(DateTime.now());
-                                });
-                                await FirebaseFirestore.instance
-                                    .collection('users')
-                                    .doc(snap.docs[0].id)
-                                    .collection('Record')
-                                    .doc(
-                                      DateFormat('dd MMMM yyyy').format(
-                                        DateTime.now(),
-                                      ),
-                                    )
-                                    .set(
-                                  {
-                                    'CheckIn': DateFormat('hh:mm a')
+                                      .update({
+                                    'CheckIn': checkIn,
+                                    'checkOut': DateFormat('hh:mm a')
                                         .format(DateTime.now()),
-                                    'checkOut': '--/--',
-                                    'date': Timestamp.now()
-                                  },
-                                );
-                                key.currentState!.reset();
+                                    'date': Timestamp.now(),
+                                    'location': location
+                                  });
+                                } catch (e) {
+                                  setState(() {
+                                    checkIn = DateFormat('hh:mm a')
+                                        .format(DateTime.now());
+                                  });
+                                  await FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(snap.docs[0].id)
+                                      .collection('Record')
+                                      .doc(
+                                        DateFormat('dd MMMM yyyy').format(
+                                          DateTime.now(),
+                                        ),
+                                      )
+                                      .set(
+                                    {
+                                      'CheckIn': DateFormat('hh:mm a')
+                                          .format(DateTime.now()),
+                                      'checkOut': '--/--',
+                                      'date': Timestamp.now(),
+                                      'loaction': location
+                                    },
+                                  );
+                                  key.currentState!.reset();
+                                }
+                              } else {
+                                Timer(Duration(seconds: 3), () async {
+                                  getLocation();
+                                  Timer(const Duration(milliseconds: 500), () {
+                                    key.currentState!.reset();
+                                  });
+                                  print(DateFormat('hh:mm')
+                                      .format(DateTime.now()));
+                                  QuerySnapshot snap = await FirebaseFirestore
+                                      .instance
+                                      .collection('users')
+                                      .where('id', isEqualTo: widget.userId)
+                                      .get();
+                                  print(snap.docs[0].id);
+                                  DocumentSnapshot snap2 =
+                                      await FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(snap.docs[0].id)
+                                          .collection('Record')
+                                          .doc(
+                                              DateFormat('dd MMMM yyyy').format(
+                                            DateTime.now(),
+                                          ))
+                                          .get();
+                                  try {
+                                    String checkIn = snap2['CheckIn'];
+                                    setState(() {
+                                      checkOut = DateFormat('hh:mm a')
+                                          .format(DateTime.now());
+                                    });
+                                    await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(snap.docs[0].id)
+                                        .collection('Record')
+                                        .doc(DateFormat('dd MMMM yyyy').format(
+                                          DateTime.now(),
+                                        ))
+                                        .update({
+                                      'CheckIn': checkIn,
+                                      'checkOut': DateFormat('hh:mm a')
+                                          .format(DateTime.now()),
+                                      'date': Timestamp.now(),
+                                      'location': location
+                                    });
+                                  } catch (e) {
+                                    setState(() {
+                                      checkIn = DateFormat('hh:mm a')
+                                          .format(DateTime.now());
+                                    });
+                                    await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(snap.docs[0].id)
+                                        .collection('Record')
+                                        .doc(
+                                          DateFormat('dd MMMM yyyy').format(
+                                            DateTime.now(),
+                                          ),
+                                        )
+                                        .set(
+                                      {
+                                        'CheckIn': DateFormat('hh:mm a')
+                                            .format(DateTime.now()),
+                                        'checkOut': '--/--',
+                                        'date': Timestamp.now(),
+                                        'loaction': location
+                                      },
+                                    );
+                                    key.currentState!.reset();
+                                  }
+                                });
                               }
                             },
                           );
@@ -269,6 +357,10 @@ class _CheckWidgetState extends State<CheckWidget> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.035,
               ),
+              location != '' ? Text(
+                'Location: ' + location,
+                style: Styles.listTile,
+              ): const SizedBox(),
               Container(
                 alignment: Alignment.centerLeft,
                 child: const Text(
@@ -311,7 +403,7 @@ class _CheckWidgetState extends State<CheckWidget> {
                   if (snapshot.hasData) {
                     final snap = snapshot.data!.docs;
                     return ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: snap.length,
                       itemBuilder: (context, index) {

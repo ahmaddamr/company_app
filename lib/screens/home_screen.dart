@@ -6,6 +6,8 @@ import 'package:shop_app/screens/tasks/widgets/custom_list_tile.dart';
 import 'package:shop_app/screens/tasks/widgets/logout_alert_dialoge.dart';
 import 'package:shop_app/screens/workers/worker_account_screen.dart';
 import 'package:shop_app/screens/workers/workers_screen.dart';
+import 'package:shop_app/services/location_service.dart';
+import 'package:shop_app/services/user_class.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int currentIndex = 0;
+  
   List<IconData> icons = [
     Icons.task,
     Icons.check,
@@ -24,6 +27,29 @@ class _HomeScreenState extends State<HomeScreen> {
     Icons.add_task,
     Icons.logout
   ];
+  @override
+  void initState() {
+    super.initState();
+    startLocationService();
+  }
+
+  void startLocationService() async {
+    LocationService().initialize();
+    LocationService().getLongitude().then((value) => {
+          setState(() {
+            UserClass.long = value!;
+            print(value);
+
+          })
+        });
+    LocationService().getLatitude().then((value) => {
+          setState(() {
+            UserClass.lat = value!;
+            print(value);
+          })
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
