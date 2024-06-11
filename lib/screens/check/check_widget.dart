@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
 import 'package:shop_app/screens/auth/widgets/sign_errors_dialoge.dart';
+import 'package:shop_app/services/location_service.dart';
 import 'package:shop_app/services/user_class.dart';
 import 'package:shop_app/utils/styles.dart';
 import 'package:slide_to_act/slide_to_act.dart';
@@ -31,17 +32,44 @@ class _CheckWidgetState extends State<CheckWidget> {
     super.initState();
     getUserData();
     getRecord();
+    startLocationService();
     getLocation();
   }
 
+  void startLocationService() async {
+    LocationService locationService = LocationService();
+    double? longitude = await locationService.getLongitude();
+    double? latitude = await locationService.getLatitude();
+
+    if (longitude != null && latitude != null) {
+      setState(() {
+        UserClass.long = longitude;
+        UserClass.lat = latitude;
+        print("Longitude: $longitude");
+        print("Latitude: $latitude");
+      });
+    }
+  }
+
   void getLocation() async {
-    List<Placemark> placemark =
-        await placemarkFromCoordinates(UserClass.lat, UserClass.long);
-    setState(() {
-      location =
-          '${placemark[0].street},${placemark[0].administrativeArea},${placemark[0].postalCode},${placemark[0].country}';
+    LocationService locationService = LocationService();
+    double? longitude = await locationService.getLongitude();
+    double? latitude = await locationService.getLatitude();
+    if (UserClass.lat != 0 && UserClass.long != 0) {
+      try {
+        List<Placemark> placemark =
+            await placemarkFromCoordinates(latitude!, longitude!);
+        setState(() {
+          location =
+              '${placemark[0].street},${placemark[0].administrativeArea},${placemark[0].postalCode},${placemark[0].country}';
           print(placemark);
-    });
+        });
+      } catch (e) {
+        print("Error getting location: $e");
+      }
+    } else {
+      print("Latitude and longitude are not available.");
+    }
   }
 
   void getRecord() async {
@@ -245,7 +273,11 @@ class _CheckWidgetState extends State<CheckWidget> {
                                     'checkOut': DateFormat('hh:mm a')
                                         .format(DateTime.now()),
                                     'date': Timestamp.now(),
-                                    'location': location
+                                    'location': location,
+                                    'latitude': UserClass
+                                        .lat, // Add latitude to Firestore
+                                    'longitude': UserClass
+                                        .long, // Add longitude to Firestore
                                   });
                                 } catch (e) {
                                   setState(() {
@@ -267,7 +299,7 @@ class _CheckWidgetState extends State<CheckWidget> {
                                           .format(DateTime.now()),
                                       'checkOut': '--/--',
                                       'date': Timestamp.now(),
-                                      'loaction': location
+                                      'loaction': location,
                                     },
                                   );
                                   key.currentState!.reset();
@@ -357,10 +389,12 @@ class _CheckWidgetState extends State<CheckWidget> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.035,
               ),
-              location != '' ? Text(
-                'Location: ' + location,
-                style: Styles.listTile,
-              ): const SizedBox(),
+              location != ''
+                  ? Text(
+                      'Location: ' + location,
+                      style: Styles.listTile,
+                    )
+                  : const SizedBox(),
               Container(
                 alignment: Alignment.centerLeft,
                 child: const Text(

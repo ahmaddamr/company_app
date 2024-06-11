@@ -32,23 +32,11 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     startLocationService();
   }
+void startLocationService() async {
+  LocationService locationService = LocationService();
+  await locationService.initialize();
+}
 
-  void startLocationService() async {
-    LocationService().initialize();
-    LocationService().getLongitude().then((value) => {
-          setState(() {
-            UserClass.long = value!;
-            print(value);
-
-          })
-        });
-    LocationService().getLatitude().then((value) => {
-          setState(() {
-            UserClass.lat = value!;
-            print(value);
-          })
-        });
-  }
 
   @override
   Widget build(BuildContext context) {
