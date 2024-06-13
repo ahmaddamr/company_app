@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
@@ -29,11 +30,22 @@ class _CheckWidgetState extends State<CheckWidget> {
 
   @override
   void initState() {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message)
+    {
+      print('==============');
+      print('Test Click');
+    });
     super.initState();
     getUserData();
     getRecord();
     startLocationService();
     getLocation();
+  }
+  void getToken()
+  async{
+    String? token =await FirebaseMessaging.instance.getToken();
+    print('==============');
+    print(token);
   }
 
   void startLocationService() async {

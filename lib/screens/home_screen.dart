@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_app/screens/check/check_screen.dart';
 import 'package:shop_app/screens/tasks/add_task_screen.dart';
@@ -29,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   @override
   void initState() {
+      FirebaseMessaging.instance.subscribeToTopic('ahmed');
     super.initState();
     startLocationService();
   }

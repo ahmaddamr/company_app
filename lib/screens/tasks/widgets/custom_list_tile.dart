@@ -1,4 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:shop_app/screens/auth/widgets/custom_button.dart';
 import 'package:shop_app/utils/styles.dart';
 
 class CustomListTile extends StatelessWidget {
@@ -10,13 +13,31 @@ class CustomListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: onTap,
-      title: Text(
-        text,
-        style: Styles.listTile,
-      ),
-      leading: leading,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ListTile(
+          onTap: onTap,
+          title: Text(
+            text,
+            style: Styles.listTile,
+          ),
+          leading: leading,
+        ),
+        // Padding(
+        //   padding: const EdgeInsets.all(15.0),
+        //   child: CustomButton(
+        //       text: 'Subscribe',
+        //       backgroundColor: Styles.buttonColor,
+        //       borderSideColor: Colors.transparent,
+        //       style: Styles.authenticationText15,
+        //       onPressed: () 
+        //       async{
+        //       await  FirebaseMessaging.instance.subscribeToTopic('ahmed');
+        //         print('subscribed');
+        //       }),
+        // )
+      ],
     );
   }
 }
