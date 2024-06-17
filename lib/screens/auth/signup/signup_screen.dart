@@ -125,7 +125,7 @@ class _LoginScreenState extends State<SignUpScreen>
                         ),
                       ),
                       SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.010,
+                        width: MediaQuery.of(context).size.width * 0.010,
                       ),
                       Flexible(
                         // flex: 1,
@@ -133,8 +133,7 @@ class _LoginScreenState extends State<SignUpScreen>
                           children: [
                             Container(
                               width: MediaQuery.of(context).size.width * 0.2,
-                              height:
-                                  MediaQuery.of(context).size.height * 0.1,
+                              height: MediaQuery.of(context).size.height * 0.1,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
                                 color: Colors.white,
@@ -323,18 +322,18 @@ class _LoginScreenState extends State<SignUpScreen>
                           style: Styles.authenticationText15,
                           onPressed: () async {
                             if (formKey.currentState!.validate()) {
-                              await FirebaseMessaging.instance.subscribeToTopic('ahmed');
-                              print('Subscribed');
+                              await FirebaseMessaging.instance
+                                  .subscribeToTopic('generalSubscription');
+                              print('generalSubscription');
                               formKey.currentState!.save();
                               if (imgFile == null) {
                                 Fluttertoast.showToast(
-                                  msg:
-                                      "You Must Choose a Photo",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.CENTER,
-                                  backgroundColor: Colors.red,
-                                  textColor: Colors.white,
-                                  fontSize: 18.0);
+                                    msg: "You Must Choose a Photo",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 18.0);
                               }
                               setState(() {
                                 isLoading = true;
@@ -365,7 +364,8 @@ class _LoginScreenState extends State<SignUpScreen>
                                   'userImage': photoUrl,
                                   'position': _positionController.text,
                                   'phoneNumber': _phoneController.text,
-                                  'createdAt': Timestamp.now()
+                                  'createdAt': Timestamp.now(),
+                                  'generalSubscription': true,
                                 });
                                 Navigator.of(context).pushNamed('HomeScreen');
                               } on FirebaseAuthException catch (e) {
@@ -440,7 +440,7 @@ class _LoginScreenState extends State<SignUpScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               InkWell(
-                onTap: ()=> pickImgWithCamera(context),
+                onTap: () => pickImgWithCamera(context),
                 child: const Row(
                   children: [
                     Icon(
@@ -496,7 +496,7 @@ class _LoginScreenState extends State<SignUpScreen>
     if (pickedfile != null) {
       cropImg(pickedfile.path);
     }
-    
+
     Navigator.pop(context);
   }
 
