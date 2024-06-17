@@ -314,7 +314,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                             return ListView.builder(
                                               shrinkWrap: true,
                                               itemCount:
-                                                  Styles.categoryList.length,
+                                                  snapshot.data!.docs.length,
                                               itemBuilder: (context, index) {
                                                 return Row(
                                                   children: [
