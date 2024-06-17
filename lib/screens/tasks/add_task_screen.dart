@@ -27,6 +27,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   late TextEditingController _dateController =
       TextEditingController(text: 'Pick up a Date');
+  late TextEditingController _userController =
+      TextEditingController(text: 'Choose a User');
 
   GlobalKey<FormState> formKey = GlobalKey();
   DateTime? pickup;
@@ -39,6 +41,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     _titleController.dispose();
     _descriptionController.dispose();
     _dateController.dispose();
+    _userController.dispose();
     super.dispose();
   }
 
@@ -272,6 +275,122 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         ),
                       ),
                     ),
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        'Choose a User',
+                        style: Styles.addTask,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text(
+                                  'Choose User',
+                                  style: TextStyle(color: Styles.buttonColor),
+                                ),
+                                content: SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.1,
+                                    // height: MediaQuery.of(context).size.height * 0.4,
+                                    child: StreamBuilder(
+                                      stream: FirebaseFirestore.instance
+                                          .collection('users')
+                                          .snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                        } else if (snapshot.connectionState ==
+                                            ConnectionState.active) {
+                                          if (snapshot.data!.docs.isNotEmpty) {
+                                            return ListView.builder(
+                                              shrinkWrap: true,
+                                              itemCount:
+                                                  Styles.categoryList.length,
+                                              itemBuilder: (context, index) {
+                                                return Row(
+                                                  children: [
+                                                    // const Icon(
+                                                    //   Icons.check_circle_rounded,
+                                                    //   color: Colors.red,
+                                                    // ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _userController
+                                                              .text = snapshot
+                                                                  .data!
+                                                                  .docs[index]
+                                                              ['name'];
+                                                        });
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text(
+                                                        snapshot.data!
+                                                                .docs[index]
+                                                            ['name'],
+                                                        style: const TextStyle(
+                                                            fontSize: 18),
+                                                      ),
+                                                    )
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          }
+                                        }
+                                        return const Center(
+                                            child: Text('An Error Happened'));
+                                      },
+                                    )),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text(
+                                      'Cancel',
+                                      style: TextStyle(fontSize: 18),
+                                    ),
+                                  )
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            filled: true,
+                            enabled: false,
+                            fillColor:
+                                Theme.of(context).scaffoldBackgroundColor,
+                            focusedBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: Styles.buttonColor),
+                            ),
+                          ),
+                          controller: _userController,
+                          style: const TextStyle(color: Styles.darkBlue),
+                          maxLength: 100,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Field is empty';
+                            } else {
+                              return null;
+                            }
+                          },
+                          onSaved: (p0) {},
+                          obscureText: false,
+                        ),
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 25.0, horizontal: 120),
@@ -308,10 +427,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                   backgroundColor: Colors.green,
                                   textColor: Colors.white,
                                   fontSize: 18.0);
-                                  _categoryController.clear();
-                                  _dateController.clear();
-                                  _descriptionController.clear();
-                                  _titleController.clear();
+                              _categoryController.clear();
+                              _dateController.clear();
+                              _descriptionController.clear();
+                              _titleController.clear();
+                              _userController.clear();
                             } else {
                               const Text('Form not Valid');
                             }
@@ -354,10 +474,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       'taskTitle': _titleController.text,
       'taskDerscreption': _descriptionController.text,
       'deadlineDate': _dateController.text,
-      'deadlineDateTimestamp':deadlineDateTimestamp,
+      'deadlineDateTimestamp': deadlineDateTimestamp,
       'taskCategory': _categoryController.text,
       'createdAt': Timestamp.now(),
-      'isDone':false
+      'isDone': false
     });
   }
 

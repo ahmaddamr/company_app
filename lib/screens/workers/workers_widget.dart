@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shop_app/screens/workers/widgets/workers_account_widget.dart';
 import 'package:shop_app/utils/functions.dart';
 import 'package:shop_app/utils/styles.dart';
 
