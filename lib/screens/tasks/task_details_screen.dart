@@ -31,6 +31,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
   Timestamp? deadlineDateTimestamp;
   String? deadlineDate;
   String? postedAt;
+  String? taskUser;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
@@ -86,6 +87,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
       deadlineDate = await taskDatabase.get('deadlineDate');
       // deadlineDateTimestamp = await taskDatabase.get('deadlineDateTimestamp');
       postedAtTimestamp = await taskDatabase.get('createdAt');
+      taskUser = await taskDatabase.get('TaskUser');
       var postDate = postedAtTimestamp!.toDate();
       postedAt = '${postDate.year}-${postDate.month}-${postDate.day}';
       var date = deadlineDate;
@@ -257,6 +259,31 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                                     : '',
                                 style: Styles.listTitle.copyWith(
                                     color: Colors.green, fontSize: 17),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Who will Do The Task:',
+                                style: Styles.listTitle.copyWith(
+                                    color: Styles.darkBlue, fontSize: 17),
+                              ),
+                            ),
+                            
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                taskUser ?? '',
+                                overflow: TextOverflow.ellipsis,
+                                style: Styles.listTitle.copyWith(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontStyle: FontStyle.italic),
                               ),
                             ),
                           ],

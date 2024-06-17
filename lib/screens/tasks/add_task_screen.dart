@@ -476,6 +476,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       'deadlineDate': _dateController.text,
       'deadlineDateTimestamp': deadlineDateTimestamp,
       'taskCategory': _categoryController.text,
+      'TaskUser':_userController.text,
       'createdAt': Timestamp.now(),
       'isDone': false
     });
