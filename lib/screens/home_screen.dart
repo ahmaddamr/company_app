@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:shop_app/manager/services/location_service.dart';
 import 'package:shop_app/screens/check/check_screen.dart';
 import 'package:shop_app/screens/tasks/add_task_screen.dart';
 import 'package:shop_app/screens/tasks/tasks_screen.dart';
@@ -7,8 +8,6 @@ import 'package:shop_app/screens/tasks/widgets/custom_list_tile.dart';
 import 'package:shop_app/screens/tasks/widgets/logout_alert_dialoge.dart';
 import 'package:shop_app/screens/workers/worker_account_screen.dart';
 import 'package:shop_app/screens/workers/workers_screen.dart';
-import 'package:shop_app/services/location_service.dart';
-import 'package:shop_app/services/user_class.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -51,19 +50,17 @@ void startLocationService() async {
           const WorkerAccountScreen(),
           WorkersScreen(),
           const AddTaskScreen(),
-          Center(
-            child: CustomListTile(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return LogoutAlertDialoge();
-                  },
-                );
-              },
-              text: 'Logout',
-              leading: const Icon(Icons.logout_outlined),
-            ),
+          CustomListTile(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return LogoutAlertDialoge();
+                },
+              );
+            },
+            text: 'Logout',
+            leading: const Icon(Icons.logout_outlined),
           ),
         ],
       ),

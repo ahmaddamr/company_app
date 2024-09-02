@@ -18,12 +18,12 @@ class LogoutAlertDialoge extends StatelessWidget {
           ),
           const Padding(
             padding: EdgeInsets.all(8.0),
-            child: Text('LogOut'),
+            child: Text('Logout'),
           )
         ],
       ),
       content: const Text(
-        'Do you want to LogOut?',
+        'Do you want to Logout?',
         style: Styles.listTile,
       ),
       actions: [

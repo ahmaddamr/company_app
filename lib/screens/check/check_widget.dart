@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,9 +7,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
+import 'package:shop_app/manager/services/location_service.dart';
+import 'package:shop_app/manager/services/user_class.dart';
 import 'package:shop_app/screens/auth/widgets/sign_errors_dialoge.dart';
-import 'package:shop_app/services/location_service.dart';
-import 'package:shop_app/services/user_class.dart';
 import 'package:shop_app/utils/styles.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 
